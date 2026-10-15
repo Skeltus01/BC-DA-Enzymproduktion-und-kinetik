@@ -4,14 +4,16 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="300165f2-3da6-4cac-bc8a-8aed913190f5" name="Changes" comment="Testi McTestface" />
+    <list default="true" id="300165f2-3da6-4cac-bc8a-8aed913190f5" name="Changes" comment="Testi McTestface 2.0">
+      <change beforePath="$PROJECT_DIR$/.idea/Praktikum Biochemische Datenanalyse.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Praktikum Biochemische Datenanalyse.iml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="17" />
+    <option name="cachedIndexableFilesCount" value="18" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -42,23 +44,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0034723233482088" />
-      <entry key="MS500" value="1.3800128872374235" />
-      <entry key="S2" value="2.5363723634585713" />
-      <entry key="S5" value="3.4995492681529523" />
-      <entry key="S10" value="4.447742178341273" />
-      <entry key="S30" value="5.831768498973513" />
-      <entry key="S60" value="6.5070342009949" />
-      <entry key="M2" value="7.677614335272301" />
-      <entry key="M5" value="10.090260675270324" />
-      <entry key="M10" value="11.683458411562787" />
-      <entry key="M15" value="12.36103464377611" />
-      <entry key="M30" value="13.129055006658676" />
-      <entry key="H1" value="13.554520952274965" />
-      <entry key="H2" value="14.723140235321175" />
-      <entry key="H4" value="29.168399066619585" />
-      <entry key="D1" value="168.7759715977387" />
-      <entry key="W1" value="244.24426029260806" />
+      <entry key="MS100" value="1.3230892731874206" />
+      <entry key="MS500" value="1.8616470306297115" />
+      <entry key="S2" value="2.4619231284797767" />
+      <entry key="S5" value="3.2091345291044022" />
+      <entry key="S10" value="4.699266710059949" />
+      <entry key="S30" value="8.07331488897065" />
+      <entry key="S60" value="9.848372841568903" />
+      <entry key="M2" value="11.681424414797677" />
+      <entry key="M5" value="14.574315552164425" />
+      <entry key="M10" value="16.387772429430278" />
+      <entry key="M15" value="17.15325976416163" />
+      <entry key="M30" value="18.01913773288811" />
+      <entry key="H1" value="18.497893780361252" />
+      <entry key="H2" value="19.69264398859338" />
+      <entry key="H4" value="34.13980620486919" />
+      <entry key="D1" value="173.74971190797203" />
+      <entry key="W1" value="249.23884880301281" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -67,36 +69,36 @@
       <entry key="S5" value="0.0" />
       <entry key="S10" value="0.0" />
       <entry key="S30" value="0.0" />
-      <entry key="S60" value="6.219304327453851E-284" />
-      <entry key="M2" value="4.721050529271359E-142" />
-      <entry key="M5" value="8.540135279699348E-57" />
-      <entry key="M10" value="2.606224787394073E-28" />
-      <entry key="M15" value="8.620170968291261E-19" />
-      <entry key="M30" value="3.0433528739975546E-9" />
-      <entry key="H1" value="1.8784437742137966E-4" />
-      <entry key="H2" value="0.04725354539699737" />
-      <entry key="H4" value="0.7520929033473986" />
-      <entry key="D1" value="7.561709254722297" />
-      <entry key="W1" value="11.23382732365459" />
+      <entry key="S60" value="4.982615382226081E-284" />
+      <entry key="M2" value="4.225678255378339E-142" />
+      <entry key="M5" value="8.169732962823386E-57" />
+      <entry key="M10" value="2.5490797713172683E-28" />
+      <entry key="M15" value="8.493699981217579E-19" />
+      <entry key="M30" value="3.0209450791218084E-9" />
+      <entry key="H1" value="1.871515634411953E-4" />
+      <entry key="H2" value="0.047166323837899864" />
+      <entry key="H4" value="0.751398468528841" />
+      <entry key="D1" value="7.560545139770804" />
+      <entry key="W1" value="11.23358024555517" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.47919865052443067" />
-      <entry key="MS500" value="1.2277056936548585" />
-      <entry key="S2" value="2.4848593122799656" />
-      <entry key="S5" value="3.4709641130746407" />
-      <entry key="S10" value="4.425605460292322" />
-      <entry key="S30" value="5.81952114476636" />
-      <entry key="S60" value="6.498943072320398" />
-      <entry key="M2" value="7.67086429472998" />
-      <entry key="M5" value="10.085287271057211" />
-      <entry key="M10" value="11.680245213304364" />
-      <entry key="M15" value="12.358689735816384" />
-      <entry key="M30" value="13.127768633524651" />
-      <entry key="H1" value="13.554034197384105" />
-      <entry key="H2" value="14.770006351859983" />
-      <entry key="H4" value="29.919983250952807" />
-      <entry key="D1" value="176.33709415775334" />
-      <entry key="W1" value="255.47796522444622" />
+      <entry key="MS100" value="1.2173811655009839" />
+      <entry key="MS500" value="1.8330155170269142" />
+      <entry key="S2" value="2.4524174125972573" />
+      <entry key="S5" value="3.199256113338915" />
+      <entry key="S10" value="4.684626130373752" />
+      <entry key="S30" value="8.05954799366715" />
+      <entry key="S60" value="9.838321513237883" />
+      <entry key="M2" value="11.673417532792353" />
+      <entry key="M5" value="14.568724612765156" />
+      <entry key="M10" value="16.38420485497739" />
+      <entry key="M15" value="17.15066418911698" />
+      <entry key="M30" value="18.01771736404437" />
+      <entry key="H1" value="18.49733685296452" />
+      <entry key="H2" value="19.739387556098926" />
+      <entry key="H4" value="34.890678388105755" />
+      <entry key="D1" value="181.30966743531351" />
+      <entry key="W1" value="260.4723062296731" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -184,6 +186,7 @@
       <workItem from="1791816059502" duration="3287000" />
       <workItem from="1791819615162" duration="5156000" />
       <workItem from="1792069041047" duration="680000" />
+      <workItem from="1792069959312" duration="313000" />
     </task>
     <task id="LOCAL-00001" summary="Projekt angelegt">
       <option name="closed" value="true" />
@@ -201,7 +204,15 @@
       <option name="project" value="LOCAL" />
       <updated>1792069555229</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Testi McTestface 2.0">
+      <option name="closed" value="true" />
+      <created>1792070012045</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1792070012045</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -210,7 +221,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Projekt angelegt" />
     <MESSAGE value="Testi McTestface" />
-    <option name="LAST_COMMIT_MESSAGE" value="Testi McTestface" />
+    <MESSAGE value="Testi McTestface 2.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="Testi McTestface 2.0" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Praktikum_Biochemische_Datenanalyse$Teilaufgabe_1.coverage" NAME="Teilaufgabe 1 Coverage Results" MODIFIED="1791822262030" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tasks" />
