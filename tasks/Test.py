@@ -4,3 +4,5 @@ print(x)
 
 
 # Servus Michi ...
+
+# hier ne bestimmte Formel angelegt
