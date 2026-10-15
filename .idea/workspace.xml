@@ -4,24 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="300165f2-3da6-4cac-bc8a-8aed913190f5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Praktikum Biochemische Datenanalyse.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/Teilaufgabe 1.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/data/MnM.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/data/Tkinetics.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/data/enzyme_production.xlsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/data/media.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/data/melt.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/data/person.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/data/production.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tasks/data/project_description.pdf" afterDir="false" />
+    <list default="true" id="300165f2-3da6-4cac-bc8a-8aed913190f5" name="Changes" comment="Projekt angelegt">
+      <change afterPath="$PROJECT_DIR$/tasks/Test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,67 +27,79 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Skeltus01&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Skeltus01/BC-DA-Enzymproduktion-und-kinetik.git&quot;,
+    &quot;accountId&quot;: &quot;b187a930-b057-4c2e-9990-ba538a4c2c9d&quot;
+  }
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0000000000000067" />
-      <entry key="S10" value="1.000000175898248" />
-      <entry key="S30" value="1.0251926414878851" />
-      <entry key="S60" value="1.649973864099084" />
-      <entry key="M2" value="5.218041919902478" />
-      <entry key="M5" value="26.09034801877966" />
-      <entry key="M10" value="66.68204306718715" />
-      <entry key="M15" value="97.3574097520204" />
-      <entry key="M30" value="149.06331899026847" />
-      <entry key="H1" value="189.20451723704585" />
-      <entry key="H2" value="214.99978688970506" />
-      <entry key="H4" value="229.76603183996673" />
-      <entry key="D1" value="243.18426255650206" />
-      <entry key="W1" value="245.59494143309934" />
+      <entry key="MS100" value="1.0000073138277739" />
+      <entry key="MS500" value="1.1451768365215673" />
+      <entry key="S2" value="2.0302377637875746" />
+      <entry key="S5" value="2.5329352968659617" />
+      <entry key="S10" value="2.7507817122168765" />
+      <entry key="S30" value="2.9179325085269214" />
+      <entry key="S60" value="3.135628204662803" />
+      <entry key="M2" value="4.094882215008544" />
+      <entry key="M5" value="6.347918099820913" />
+      <entry key="M10" value="7.842354987139073" />
+      <entry key="M15" value="8.475477190686373" />
+      <entry key="M30" value="9.19109405291432" />
+      <entry key="H1" value="9.586873980720828" />
+      <entry key="H2" value="10.741204569249343" />
+      <entry key="H4" value="25.189174196119552" />
+      <entry key="D1" value="164.79834776962025" />
+      <entry key="W1" value="240.24891731471138" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="8.273901520094267E-125" />
-      <entry key="S2" value="1.126289070969409E-31" />
-      <entry key="S5" value="5.878482268604455E-13" />
-      <entry key="S10" value="1.0691088562597882E-6" />
-      <entry key="S30" value="0.01626313905881903" />
-      <entry key="S60" value="0.19489121052922498" />
-      <entry key="M2" value="0.8357259180827965" />
-      <entry key="M5" value="2.6957203621143675" />
-      <entry key="M10" value="4.6303830049516055" />
-      <entry key="M15" value="5.869294604711962" />
-      <entry key="M30" value="7.941221800390146" />
-      <entry key="H1" value="9.595457973798743" />
-      <entry key="H2" value="10.679923762834179" />
-      <entry key="H4" value="11.306765044869865" />
-      <entry key="D1" value="11.879489764317372" />
-      <entry key="W1" value="11.982657493619323" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="7.559040997812547E-284" />
+      <entry key="M2" value="5.2047646326751366E-142" />
+      <entry key="M5" value="8.87993381031501E-57" />
+      <entry key="M10" value="2.6575678435975556E-28" />
+      <entry key="M15" value="8.73301499067652E-19" />
+      <entry key="M30" value="3.063207907188877E-9" />
+      <entry key="H1" value="1.8845613575749955E-4" />
+      <entry key="H2" value="0.04733042885970938" />
+      <entry key="H4" value="0.7527044977263339" />
+      <entry key="D1" value="7.5627337586211905" />
+      <entry key="W1" value="11.234044742972314" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.7896041095457142E-5" />
-      <entry key="MS500" value="0.1123443908263787" />
-      <entry key="S2" value="0.578945721026664" />
-      <entry key="S5" value="0.8036281468186725" />
-      <entry key="S10" value="0.8964542205050078" />
-      <entry key="S30" value="1.0040908645020392" />
-      <entry key="S60" value="1.810808788105719" />
-      <entry key="M2" value="6.002729885620371" />
-      <entry key="M5" value="28.72571315679259" />
-      <entry key="M10" value="71.26071675151087" />
-      <entry key="M15" value="103.18315649020002" />
-      <entry key="M30" value="156.97551046092488" />
-      <entry key="H1" value="198.78268646003465" />
-      <entry key="H2" value="225.67017667429874" />
-      <entry key="H4" value="241.06777527852276" />
-      <entry key="D1" value="255.06287682007522" />
-      <entry key="W1" value="257.5774728653062" />
+      <entry key="MS100" value="0.8705567727338945" />
+      <entry key="MS500" value="1.0897698388993093" />
+      <entry key="S2" value="1.9446219711411217" />
+      <entry key="S5" value="2.4788564715148698" />
+      <entry key="S10" value="2.7191952682731437" />
+      <entry key="S30" value="2.906159089019857" />
+      <entry key="S60" value="3.128420341960787" />
+      <entry key="M2" value="4.088637847372623" />
+      <entry key="M5" value="6.343199916680111" />
+      <entry key="M10" value="7.8393008971840095" />
+      <entry key="M15" value="8.473248949331387" />
+      <entry key="M30" value="9.189872517000916" />
+      <entry key="H1" value="9.586422142941556" />
+      <entry key="H2" value="10.7881651620084" />
+      <entry key="H4" value="25.941378665702253" />
+      <entry key="D1" value="172.36049627049886" />
+      <entry key="W1" value="251.4828398801109" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -136,7 +133,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
-    "settings.editor.selected.configurable": "editor.preferences.completion.inline",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
     "to.speed.mode.migration.done": "true"
   }
 }]]></component>
@@ -145,8 +142,8 @@
       <recent name="C:\Users\sam04\OneDrive - Universität Bayreuth\Privat\Praktikum Biochemische Datenanalyse\data" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\sam04\OneDrive - Universität Bayreuth\Privat\Praktikum Biochemische Datenanalyse\tasks\data" />
       <recent name="C:\Users\sam04\OneDrive - Universität Bayreuth\Privat\Praktikum Biochemische Datenanalyse\tasks" />
+      <recent name="C:\Users\sam04\OneDrive - Universität Bayreuth\Privat\Praktikum Biochemische Datenanalyse\tasks\data" />
     </key>
   </component>
   <component name="RunManager">
@@ -181,12 +178,26 @@
       <option name="presentableId" value="Default" />
       <updated>1791816058373</updated>
       <workItem from="1791816059502" duration="3287000" />
-      <workItem from="1791819615162" duration="4533000" />
+      <workItem from="1791819615162" duration="5156000" />
+      <workItem from="1792069041047" duration="477000" />
     </task>
+    <task id="LOCAL-00001" summary="Projekt angelegt">
+      <option name="closed" value="true" />
+      <created>1791878234112</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1791878234112</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Projekt angelegt" />
+    <option name="LAST_COMMIT_MESSAGE" value="Projekt angelegt" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Praktikum_Biochemische_Datenanalyse$Teilaufgabe_1.coverage" NAME="Teilaufgabe 1 Coverage Results" MODIFIED="1791822262030" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tasks" />
