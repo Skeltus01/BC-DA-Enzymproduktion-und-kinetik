@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="300165f2-3da6-4cac-bc8a-8aed913190f5" name="Changes" comment="Projekt angelegt">
-      <change afterPath="$PROJECT_DIR$/tasks/Test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="300165f2-3da6-4cac-bc8a-8aed913190f5" name="Changes" comment="Testi McTestface" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,23 +42,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0000073138277739" />
-      <entry key="MS500" value="1.1451768365215673" />
-      <entry key="S2" value="2.0302377637875746" />
-      <entry key="S5" value="2.5329352968659617" />
-      <entry key="S10" value="2.7507817122168765" />
-      <entry key="S30" value="2.9179325085269214" />
-      <entry key="S60" value="3.135628204662803" />
-      <entry key="M2" value="4.094882215008544" />
-      <entry key="M5" value="6.347918099820913" />
-      <entry key="M10" value="7.842354987139073" />
-      <entry key="M15" value="8.475477190686373" />
-      <entry key="M30" value="9.19109405291432" />
-      <entry key="H1" value="9.586873980720828" />
-      <entry key="H2" value="10.741204569249343" />
-      <entry key="H4" value="25.189174196119552" />
-      <entry key="D1" value="164.79834776962025" />
-      <entry key="W1" value="240.24891731471138" />
+      <entry key="MS100" value="1.0034723233482088" />
+      <entry key="MS500" value="1.3800128872374235" />
+      <entry key="S2" value="2.5363723634585713" />
+      <entry key="S5" value="3.4995492681529523" />
+      <entry key="S10" value="4.447742178341273" />
+      <entry key="S30" value="5.831768498973513" />
+      <entry key="S60" value="6.5070342009949" />
+      <entry key="M2" value="7.677614335272301" />
+      <entry key="M5" value="10.090260675270324" />
+      <entry key="M10" value="11.683458411562787" />
+      <entry key="M15" value="12.36103464377611" />
+      <entry key="M30" value="13.129055006658676" />
+      <entry key="H1" value="13.554520952274965" />
+      <entry key="H2" value="14.723140235321175" />
+      <entry key="H4" value="29.168399066619585" />
+      <entry key="D1" value="168.7759715977387" />
+      <entry key="W1" value="244.24426029260806" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -70,36 +67,36 @@
       <entry key="S5" value="0.0" />
       <entry key="S10" value="0.0" />
       <entry key="S30" value="0.0" />
-      <entry key="S60" value="7.559040997812547E-284" />
-      <entry key="M2" value="5.2047646326751366E-142" />
-      <entry key="M5" value="8.87993381031501E-57" />
-      <entry key="M10" value="2.6575678435975556E-28" />
-      <entry key="M15" value="8.73301499067652E-19" />
-      <entry key="M30" value="3.063207907188877E-9" />
-      <entry key="H1" value="1.8845613575749955E-4" />
-      <entry key="H2" value="0.04733042885970938" />
-      <entry key="H4" value="0.7527044977263339" />
-      <entry key="D1" value="7.5627337586211905" />
-      <entry key="W1" value="11.234044742972314" />
+      <entry key="S60" value="6.219304327453851E-284" />
+      <entry key="M2" value="4.721050529271359E-142" />
+      <entry key="M5" value="8.540135279699348E-57" />
+      <entry key="M10" value="2.606224787394073E-28" />
+      <entry key="M15" value="8.620170968291261E-19" />
+      <entry key="M30" value="3.0433528739975546E-9" />
+      <entry key="H1" value="1.8784437742137966E-4" />
+      <entry key="H2" value="0.04725354539699737" />
+      <entry key="H4" value="0.7520929033473986" />
+      <entry key="D1" value="7.561709254722297" />
+      <entry key="W1" value="11.23382732365459" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.8705567727338945" />
-      <entry key="MS500" value="1.0897698388993093" />
-      <entry key="S2" value="1.9446219711411217" />
-      <entry key="S5" value="2.4788564715148698" />
-      <entry key="S10" value="2.7191952682731437" />
-      <entry key="S30" value="2.906159089019857" />
-      <entry key="S60" value="3.128420341960787" />
-      <entry key="M2" value="4.088637847372623" />
-      <entry key="M5" value="6.343199916680111" />
-      <entry key="M10" value="7.8393008971840095" />
-      <entry key="M15" value="8.473248949331387" />
-      <entry key="M30" value="9.189872517000916" />
-      <entry key="H1" value="9.586422142941556" />
-      <entry key="H2" value="10.7881651620084" />
-      <entry key="H4" value="25.941378665702253" />
-      <entry key="D1" value="172.36049627049886" />
-      <entry key="W1" value="251.4828398801109" />
+      <entry key="MS100" value="0.47919865052443067" />
+      <entry key="MS500" value="1.2277056936548585" />
+      <entry key="S2" value="2.4848593122799656" />
+      <entry key="S5" value="3.4709641130746407" />
+      <entry key="S10" value="4.425605460292322" />
+      <entry key="S30" value="5.81952114476636" />
+      <entry key="S60" value="6.498943072320398" />
+      <entry key="M2" value="7.67086429472998" />
+      <entry key="M5" value="10.085287271057211" />
+      <entry key="M10" value="11.680245213304364" />
+      <entry key="M15" value="12.358689735816384" />
+      <entry key="M30" value="13.127768633524651" />
+      <entry key="H1" value="13.554034197384105" />
+      <entry key="H2" value="14.770006351859983" />
+      <entry key="H4" value="29.919983250952807" />
+      <entry key="D1" value="176.33709415775334" />
+      <entry key="W1" value="255.47796522444622" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -111,32 +108,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.Teilaufgabe 1.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "C:/Users/sam04/OneDrive - Universität Bayreuth/Privat/Praktikum Biochemische Datenanalyse/data",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.jshint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.jshint": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.Teilaufgabe 1.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/sam04/OneDrive - Universität Bayreuth/Privat/Praktikum Biochemische Datenanalyse/data&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;python.packages.toolwindow.project.migrated.to.right.top.v2&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\sam04\OneDrive - Universität Bayreuth\Privat\Praktikum Biochemische Datenanalyse\data" />
@@ -147,6 +144,13 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
+      <steps>
+        <latexmkCompile id="da1eb305-fbad-44c5-b888-10dd61f0a97c" />
+        <pdfViewer id="3545488b-e01f-4e9f-a900-8966193b0d14" />
+      </steps>
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
       <steps>
         <latexmkCompile id="da1eb305-fbad-44c5-b888-10dd61f0a97c" />
@@ -179,7 +183,7 @@
       <updated>1791816058373</updated>
       <workItem from="1791816059502" duration="3287000" />
       <workItem from="1791819615162" duration="5156000" />
-      <workItem from="1792069041047" duration="477000" />
+      <workItem from="1792069041047" duration="680000" />
     </task>
     <task id="LOCAL-00001" summary="Projekt angelegt">
       <option name="closed" value="true" />
@@ -189,7 +193,15 @@
       <option name="project" value="LOCAL" />
       <updated>1791878234112</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Testi McTestface">
+      <option name="closed" value="true" />
+      <created>1792069555229</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1792069555229</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -197,7 +209,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Projekt angelegt" />
-    <option name="LAST_COMMIT_MESSAGE" value="Projekt angelegt" />
+    <MESSAGE value="Testi McTestface" />
+    <option name="LAST_COMMIT_MESSAGE" value="Testi McTestface" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Praktikum_Biochemische_Datenanalyse$Teilaufgabe_1.coverage" NAME="Teilaufgabe 1 Coverage Results" MODIFIED="1791822262030" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tasks" />
