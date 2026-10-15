@@ -5,6 +5,8 @@ import scipy
 import scipy.stats as stats
 import math
 import pandas as pd
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
 
 
 # Einlesen der Daten aus der CSV (aus XLSX konvertiert)
@@ -58,12 +60,13 @@ alpha = 1 - confidence
 
 
 # Stichprobengröße und Standardfehler (SEM)
-lb_n = len(lb_values)-1
+lb_n = len(lb_values)
+lb_df = lb_n - 1
 lb_sem = stats.sem(lb_values)  # oder lb_values.std(ddof=1) / np.sqrt(n_lb)
 
 ci_lb = stats.t.interval(
     confidence=confidence,
-    df=lb_n,
+    df=lb_df,
     loc=lb_mean,
     scale=lb_sem)
 conf1 = stats.norm.ppf(alpha/2)
@@ -81,7 +84,7 @@ conf2 = stats.t.ppf(alpha/2, df=v)
 
 ###
 lb_v = lb_values - 1
-lb_s = lb_values.std(ddof=1) / np.sqrt(lb_n)
+lb_s = lb_values.std(ddof=1) / np.sqrt(lb_df)
 t_crit = stats.t.ppf(1 - alpha / 2, df=lb_v)
 marg_err = t_crit * lb_s
 
