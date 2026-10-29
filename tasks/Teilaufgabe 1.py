@@ -6,6 +6,7 @@ import scipy.stats as stats
 import math
 import pandas as pd
 import statsmodels.api as sm
+import statsmodels.stats.multicomp as smm
 import statsmodels.formula.api as smf
 
 
@@ -22,12 +23,21 @@ tb_values = df["TB"].dropna()
 
 # 1.i
 # Stellen Sie die Ausbeuten für LB und TB in geeigneter Weise grafisch dar!
+
+fig, ax = plt.subplots(figsize=(5, 4))
+ax.boxplot([lb_values, tb_values], tick_labels=['LB', 'TB'])
+#Jittering
+for i, x in enumerate([lb_values, tb_values], start=1):
+    ax.scatter(np.random.normal(i, 0.04, len(x)), x, s=15, alpha=0.6)
+ax.set_ylabel('Ausbeute (mg pro L Kultur)')
+ax.set_title('Enzymausbeute nach 24 h')
+#fig.savefig('plots/a1_boxplot.svg')
+plt.show()
+
+
+
 # Bestimmen Sie für beide Datensätze Mittelwert, Varianz, Median und die Quartile Q1 und Q3!
 
-# Ausbeuten
-###
-
-# Werte der Datensätze
 lb_mean = lb_values.mean()
 lb_var = lb_values.var()
 lb_median = lb_values.median()
