@@ -55,50 +55,76 @@ print(
 
 # 1.ii
 # Bestimmen Sie für beide Medien 95%-Konfidenzintervalle, innerhalb deren sich der wirkliche Mittelwert der Ausbeute befindet!
-confidence = 0.95
-alpha = 1 - confidence
+alpha = 0.05                    #α
+confidence = 1 - alpha          #1-α  -Konfidenzniveau
 
-
+###### LB ######
 # Stichprobengröße und Standardfehler (SEM)
-lb_n = len(lb_values)
-lb_df = lb_n - 1
-lb_sem = stats.sem(lb_values)  # oder lb_values.std(ddof=1) / np.sqrt(n_lb)
+lb_n = len(lb_values)           #N          -Stichprobengröße
+lb_df = lb_n - 1                #ν (N-1)    -Freiheitsgrade
+lb_s = lb_values.std(ddof=1)    #s          -Standardabweichung
+lb_sem = lb_s / np.sqrt(lb_n)   #s_x̄        -Standardfehler des Mittelwertes (SEM)
 
-ci_lb = stats.t.interval(
-    confidence=confidence,
-    df=lb_df,
-    loc=lb_mean,
-    scale=lb_sem)
-conf1 = stats.norm.ppf(alpha/2)
-ci_lb2 = lb_mean + np.array([-1, 1]) * conf1 * lb_sem
-#conf2 = stats.t.ppf(alpha/2, df=v)
-print("95%-Konfidenzintervall (LB): ", ci_lb)
-print("95%-Konfidenzintervall (LB): ", ci_lb2)
+# Quantile und Grenzen des Konfidenzintervalls
+lb_q = stats.t.ppf(1-alpha/2, df=lb_df)
 
-alpha = 0.95
-v = len(tb_values)-1
-conf1 = stats.norm.ppf(alpha/2)
-conf2 = stats.t.ppf(alpha/2, df=v)
-#print(conf1, conf2)
+g0 = lb_mean - lb_q * lb_sem
+g1 = lb_mean + lb_q * lb_sem
+
+print(f"Quantil t_(v,1-α/2): {lb_q:.4f}")
+print(f"95%-Konfidenzintervall (LB): [{g0:.4f}, {g1:.4f}];")
 
 
-###
-lb_v = lb_values - 1
-lb_s = lb_values.std(ddof=1) / np.sqrt(lb_df)
-t_crit = stats.t.ppf(1 - alpha / 2, df=lb_v)
-marg_err = t_crit * lb_s
+###### TB ######
+# Stichprobengröße und Standardfehler (SEM)
+tb_n = len(tb_values)           #N          -Stichprobengröße
+tb_df = tb_n - 1                #ν (N-1)    -Freiheitsgrade
+tb_s = tb_values.std(ddof=1)    #s          -Standardabweichung
+tb_sem = tb_s / np.sqrt(tb_n)   #s_x̄        -Standardfehler des Mittelwertes (SEM)
 
-ci_lower = lb_mean - marg_err
-ci_upper = lb_mean + marg_err
+# Quantile und Grenzen des Konfidenzintervalls
+tb_q = stats.t.ppf(1-alpha/2, df=tb_df)
 
-print(type(ci_lower))
-print(type(ci_upper))
-print(ci_lower)
-print(ci_upper)
+g0 = tb_mean - tb_q * tb_sem
+g1 = tb_mean + tb_q * tb_sem
 
-print(f"Mittelwert LB: {lb_mean:.4f}")
-#print(f"Kritischer t-Wert (df={lb_v}): {t_crit:.4f}")
-print(f"95%-Konfidenzintervall: [{ci_lower:.4f}, {ci_upper:.4f}]")
+print(f"Quantil t_(v,1-α/2) (TB): {tb_q:.4f}")
+print(f"95%-Konfidenzintervall (TB): [{g0:.4f}, {g1:.4f}];")
+
+
+
+def Konfidenzintervall(x:pd.Series):
+    x_mean = x.mean()
+    x_var = x.var()
+    x_median = x.median()
+    x_q1 = x.quantile(0.25)
+    x_q3 = x.quantile(0.75)
+    print(
+        f"Mittelwert {str(x.name)}:", x_mean,
+        f"Varianz {str(x.name)}:", x_var,
+        f"Median {str(x.name)}:", x_median,
+        f"Quartile {str(x.name)}: (Q1/Q3)", x_q1, x_q3
+    )
+
+    alpha = 0.05
+    confidence = 1 - alpha
+
+    x_n = len(x)
+    x_df = x_n - 1
+    x_s = x.std(ddof=1)
+    x_sem = x_s / np.sqrt(x_n)
+
+    # Quantile und Grenzen des Konfidenzintervalls
+    x_q = stats.t.ppf(1 - alpha / 2, df=x_df)
+
+    g0 = x_mean - x_q * x_sem
+    g1 = x_mean + x_q * x_sem
+
+    print(f"Quantil t_(v,1-α/2): {x_q:.4f}")
+    print(f"95%-Konfidenzintervall (LB): [{g0:.4f}, {g1:.4f}];")
+    return x
+
+Konfidenzintervall(lb_values)
 
 # 1.iii
 # In der Literatur ist für die Produktion des gleichen Enzymes in LB-Medium eine Ausbeute von 3 mg pro Liter Expressionskultur beschrieben.
