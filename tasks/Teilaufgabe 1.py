@@ -224,6 +224,17 @@ else:
 tb_ttest = stats.ttest_1samp(tb_values, µ_0, alternative='greater')
 #tb_p_value = tb_ttest.pvalue
 
+#Q-Q-Plot --> Graphische Überprüfung der Normalverteilung
+#VL08:37
+fig, axes = plt.subplots(1, 2, figsize=(8, 3.5))
+for ax, (name, x) in zip(axes, [('LB', lb_values), ('TB', tb_values)]):
+    stats.probplot(x, plot=ax)
+    ax.set_title(f'Q-Q-Plot {name}')
+fig.tight_layout();
+#fig.savefig('plots/a1_qqplots.svg') ##nur zur Neugenerierung der Q-Q-Plots auskommentieren
+plt.show()
+
+
 tb_t = (tb_mean - µ_0) * (np.sqrt(tb_n)/tb_s)
 #Notiz: tb_df = tb_n-1
 tb_p_value = -stats.t.cdf(tb_t, tb_dof)+1
@@ -256,13 +267,13 @@ confidence = 1-alpha
 
 #Unabhängige Stichproben? Ja! Kein gepaarter t-Test, kein Wilcoxon-Vorzeichentest
 #Normalverteilung? Ja!
-#Varianz-Homogenität?
+#Varianz-Homogenität
 
 #H1: σ^2_LB != σ^2_TB
 #H0: σ^2_LB = σ^2_TB
 levene = stats.levene(lb_values, tb_values, center='mean')
 
-if levene.pvalue < 0.05: #Bei einem Voraussetzungstest ist ein strenges σ sogar ungünstig (also 0.05 üblich). Er übersieht dann eher eine verletzte Voraussetzung (Fehler 2. Art) und genau diesen Fehler will man hier vermeiden.
+if levene.pvalue < 0.05: #ein strenges σ hier (Voraussetzungstest) sogar ungünstig (also 0.05 üblich). Da wird eher eine verletzte Voraussetzung (Fehler 2. Art) übersehen und genau diesen Fehler will man hier vermeiden.
     print("Hier machen wir theoretisch einen Welch-Test")
 else:
     print("Hier machen wir theoretisch einen Student-Test")
