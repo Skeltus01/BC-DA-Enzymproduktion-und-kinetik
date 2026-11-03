@@ -5,9 +5,6 @@ import scipy
 import scipy.stats as stats
 import math
 import pandas as pd
-import statsmodels.api as sm
-import statsmodels.stats.multicomp as smm
-import statsmodels.formula.api as smf
 from matplotlib.ticker import MultipleLocator
 
 # Einlesen der Daten aus der CSV (aus XLSX konvertiert)
