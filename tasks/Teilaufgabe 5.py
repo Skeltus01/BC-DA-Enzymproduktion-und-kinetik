@@ -4,13 +4,51 @@
 # Somit kann die jeweilig gebildete Menge Produkts quantifiziert werden, was in dem Tab ‚MnM‘ abgelegt ist.
 # Für jede Substratkonzentration wurden drei biologisch unabhängige Replikate durchgeführt.
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas
+import scipy
+import scipy.stats as stats
+import scipy.optimize as optimize
+import math
+import pandas as pd
+import statsmodels.api as sm
+import statsmodels.stats.multicomp as smm
+import statsmodels.formula.api as smf
+from matplotlib.ticker import MultipleLocator
+
+df = pd.read_csv(
+    "data/MnM.csv",
+    sep=";",
+    header=None,
+    dtype=str,
+    encoding="cp1252"
+)
+
+konz = [2, 4, 8, 16, 24, 32, 39, 47, 56, 66, 77, 90, 110]
+
+def get(c, rep):
+    i, z = konz.index(c), 5 + 10 * (rep - 1)
+    out = df.iloc[z:z+6, 3*i:3*i+2].apply(lambda s: s.str.replace(",", ".").astype(float))
+    out.columns = ["Time (min)", "Product (nM)"]
+    return out.reset_index(drop=True)
+
+""" Auslesen der Daten:
+
+>>> Konzentration: 4 µM
+>>> Replikat: 2
+>>> get(4, 2)
+"""
+print(get(4, 2))
+
+
 # Bearbeiten Sie nun folgende Aufgaben und Fragen:
 
 
 
 # 5.i
 # Bestimmen Sie für jede Substratkonzentration und jedes Replikat die Anfangsgeschwindigkeit v0
-# der Reaktion! Auch wenn es sich hierbei um einen linearen Fit handelt, kann dennoch auch die nichtlineare
+# der Reaktion! Auch wenn es sich hierbei um einen linearen Fit handelt, kann dennoch auch die nicht-lineare
 # Regressionsanalyse eingesetzt werden.
 
 
