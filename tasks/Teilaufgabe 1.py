@@ -1,7 +1,6 @@
 # Heterologe Produktion eines Enzyms in verschiedenen Nährmedien
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy
 import scipy.stats as stats
 import pandas as pd
 from matplotlib.ticker import MultipleLocator
