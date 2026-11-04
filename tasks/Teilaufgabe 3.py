@@ -51,7 +51,7 @@ for i, x in enumerate(daten, start=1):
     ax.scatter(np.random.normal(i, 0.05, len(x)), x, s=15, alpha=0.6)
 ax.set_ylabel('Ausbeute (mg/L)')
 ax.set_title('BL21, TB, 24 h')
-fig.savefig('plots/a3_boxplot.svg')
+#fig.savefig('plots/a3_boxplot.svg')
 plt.show()
 
 kenn = person_df.groupby('Person').agg(['mean', 'var'])
@@ -63,6 +63,40 @@ print(kenn)
 # Führen Sie eine einfaktorielle Varianzanalyse nach Modell II durch und beantworten auf einem
 # Konfidenzniveau von α = 0.05 die Frage, ob ein signifikanter Einfluss des zufälligen Einflussfaktors Experimentator
 # auf die erzielten Ausbeuten des Enzyms besteht!
+
+"""
+Modell I: es gibt eine festgelegte Anzahl an Stufen
+
+Modell II: es gibt eine variable Anzahl an Stufen
+
+Bei Modell II sind die Stufen nicht gezielt gewählt. Sie sind eine Zufallsauswahl aus einer größeren Grundgesamtheit möglicher Stufen. 
+Die Frage ist nicht, ob genau diese vier sich unterscheiden. Die Frage ist, ob die Person überhaupt eine Streuquelle ist.
+
+Getestet wird die Varianz des Personeneffekts:
+𝐻1∶ 𝜎2𝐴 >0 
+𝐻0∶ 𝜎2𝐴=0
+
+Faktor: Stamm
+Stufen: einzelne Stämme (Ausprägungen)
+Werte: Ausbeute
+"""
+
+for p, x in zip(personen, daten):
+    print(p, 'Shapiro-Wilk p =', round(stats.shapiro(x).pvalue, 3))
+print('Levene p-Wert (mean): ', stats.levene(*daten, center='mean').pvalue)
+#todo: evtl. nur mean? haben in der VL nur mean verwendet
+print('Levene p-Wert (median):', stats.levene(*daten, center='median').pvalue)
+
+#ANOVA
+anova = stats.f_oneway(*daten)
+print(f'ANOVA f-Wert: {anova.statistic}, p-Wert: {anova.pvalue}')
+k, n = len(daten), len(daten[0])
+print('ν1 =', k - 1, ' ν2 =', k * (n - 1))
+
+
+mm = smf.mixedlm('Ausbeute ~ 1', data=person_df, groups=person_df['Person']).fit(reml=True)
+print(mm.summary()) # 'Group Var' ≈ σ²_A, 'Scale' ≈ σ²_E
+print(mm.random_effects) # geschätzte Effekte der einzelnen Personen
 
 
 
