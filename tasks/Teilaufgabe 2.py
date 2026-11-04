@@ -13,6 +13,7 @@ import pandas as pd
 import statsmodels.api as sm
 import statsmodels.stats.multicomp as smm
 import statsmodels.formula.api as smf
+from fontTools import feaLib
 from matplotlib.ticker import MultipleLocator
 
 df = pd.read_csv(
@@ -114,7 +115,7 @@ ax.set_ylabel('Ausbeute (mg/L), Mittel ± 95-%-KI')
 ax.set_xticks(zeiten)
 ax.set_ylim(0,7)
 ax.legend(title='Expressionsstamm', frameon=True, fontsize='small', title_fontsize='small')
-fig.savefig('plots/a2_verlauf_KI.svg', bbox_inches='tight')
+#fig.savefig('plots/a2_verlauf_KI.svg', bbox_inches='tight')
 plt.show()
 
 # 2.iii
@@ -153,10 +154,7 @@ levene = stats.levene(*staemme_24, center='mean')
 print(f"Levene: p = {levene.pvalue:.4f}")
 
 ### ANOVA
-anova = stats.f_oneway(*staemme_24)
-anova_p = anova.pvalue
-anova_f = anova.statistic
-print(f"ANOVA: f = {anova_f:.4f}, p = {anova_p:.4f}")
+
 
 mean_ges = staemme_df.loc[staemme_df['Zeit'] == 24, 'Ausbeute'].mean()
 print(mean_ges)
@@ -167,17 +165,42 @@ qs_fehler = sum(((value - value.mean())**2).sum() for value in staemme_24)
 print(f"QS Fehler: {qs_fehler:.4f}")
 
 #Berechnung der Freiheitsgrade
-frei_faktor = len(namen) - 1 #freiheitsgrade_faktor =
-frei_fehler = len(namen) * (len(staemme_df['Zeit'].unique()) - 1) #freiheitsgrade_fehler0
+k, N = len(namen), sum(len(s) for s in staemme_24)
+dof_faktor = k - 1
+dof_fehler = N - k
+print(f"Freiheitsgrade Faktor: {dof_faktor}, Freiheitsgrade Fehler: {dof_fehler}")
 
 #Berechnung der mittleren Quadratsummen:
-mq_faktor = qs_faktor / frei_faktor
-mq_fehler = qs_fehler / frei_fehler
+mq_faktor = qs_faktor / dof_faktor
+mq_fehler = qs_fehler / dof_fehler
+print(f"MQ Faktor: {mq_faktor:.4f}, MQ Fehler: {mq_fehler:.4f}")
 
-#stats.pairwise_tukeyhsd(ki_df.loc[:, 'Mittelwert'], ki_df.index.get_level_values('Stamm'), alpha=0.01)
+#f-Wert
+f = mq_faktor / mq_fehler
+print(f"f-Wert: {f:.4f}")
+
+#TODO: warum funktioniert hier sf und nicht cdf? - zu viele Nachkommastellen für double
+#p-Wert = 1 - stats.f.cdf(f, dof_faktor, dof_fehler
+p = stats.f.sf(f, dof_faktor, dof_fehler)
+print(f"p-Wert: {p:.4e}")
+
+#η²
+eta2 = qs_faktor / (qs_faktor + qs_fehler)
+print(f"η²: {eta2:.4f}")
+
+#Kontrolle
+anova = stats.f_oneway(*staemme_24)
+anova_p = anova.pvalue
+anova_f = anova.statistic
+print(f"ANOVA: f = {anova_f:.4f}, p = {anova_p:.4e}")
 
 
-# 2.iv
+### Tukey-HSD
+tukey = smm.pairwise_tukeyhsd(endog=df_24.loc[:, 'Ausbeute'], groups=df_24['Stamm'], alpha=0.01)
+print(tukey)
+
+
+# 2.iv (optional)
 # Führen Sie nun eine zweifaktorielle Varianzanalyse durch und beantworten auf einem Konfidenzniveau
 # von α = 0.05, ob die Einflußfaktoren Expressionsstamm und Expressionsdauer alleine oder in Kombination
 # signifikant die Ausbeute beeinflussen! Falls ja, führen Sie eine Analyse der einzelnen Faktorstufen durch!
