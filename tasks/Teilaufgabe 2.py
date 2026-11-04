@@ -124,7 +124,57 @@ plt.show()
 # führen Sie nun einen adäquaten post hoc-Test durch, um festzustellen, welche Stufe(n) des Faktors
 # hier maßgeblich sind/ist!
 
+# Voraussetzung:
+# 1. Feste Stufen (fest gewählte Stämme) -> Modell 1
+# 2. unabhängige, zufällige Fehler e_ij
+# 3. Normalverteilung der Messwerte
+# 4. Varianzhomogenität
 
+df_24 = staemme_df[staemme_df['Zeit'] == 24] #temporär, um alle Daten auf 24h zu reduzieren
+staemme_24 = [df_24[df_24['Stamm'] == s]['Ausbeute'].values for s in namen]
+for s, g in zip(namen, staemme_24):
+    print(s, len(g), g.mean().round(3), g.var(ddof=1).round(3))
+
+### Shapiro-Wilk
+#print(staemme_df)
+for name, value in zip(namen, staemme_24):
+    shapiro = stats.shapiro(value)
+    print(f"Shapiro-Wilk Test for {name}: W = {shapiro.statistic:.4f}, p = {shapiro.pvalue:.4f}")
+    print()
+
+# Residues = Messwert - Gruppenmittel
+res = np.concatenate([value - value.mean() for value in staemme_24])
+print(f'Shapiro Residuen: p = {stats.shapiro(res).pvalue:.4f}')
+stats.probplot(res, plot=plt)
+plt.show()
+
+### Levene
+levene = stats.levene(*staemme_24, center='mean')
+print(f"Levene: p = {levene.pvalue:.4f}")
+
+### ANOVA
+anova = stats.f_oneway(*staemme_24)
+anova_p = anova.pvalue
+anova_f = anova.statistic
+print(f"ANOVA: f = {anova_f:.4f}, p = {anova_p:.4f}")
+
+mean_ges = staemme_df.loc[staemme_df['Zeit'] == 24, 'Ausbeute'].mean()
+print(mean_ges)
+
+qs_faktor = sum(len(value) * (value.mean() - mean_ges)**2 for value in staemme_24)
+print(f"QS Faktor: {qs_faktor:.4f}")
+qs_fehler = sum(((value - value.mean())**2).sum() for value in staemme_24)
+print(f"QS Fehler: {qs_fehler:.4f}")
+
+#Berechnung der Freiheitsgrade
+frei_faktor = len(namen) - 1 #freiheitsgrade_faktor =
+frei_fehler = len(namen) * (len(staemme_df['Zeit'].unique()) - 1) #freiheitsgrade_fehler0
+
+#Berechnung der mittleren Quadratsummen:
+mq_faktor = qs_faktor / frei_faktor
+mq_fehler = qs_fehler / frei_fehler
+
+#stats.pairwise_tukeyhsd(ki_df.loc[:, 'Mittelwert'], ki_df.index.get_level_values('Stamm'), alpha=0.01)
 
 
 # 2.iv
