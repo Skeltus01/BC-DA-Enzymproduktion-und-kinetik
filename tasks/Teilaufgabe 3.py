@@ -9,15 +9,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas
-import scipy
 import scipy.stats as stats
-import math
 import pandas as pd
-import statsmodels.api as sm
-import statsmodels.stats.multicomp as smm
 import statsmodels.formula.api as smf
-from matplotlib.ticker import MultipleLocator
 
 df = pd.read_csv(
     "data/person.csv",
@@ -43,18 +37,25 @@ jacky = person_df[person_df['Person'] == 'Jacky']['Ausbeute']
 # Stellen Sie die Daten wiederum in geeigneter Weise grafisch dar und bestimmen die gängigen statistischen
 # Kenngrößen Mittelwert und Varianz für alle Personen!
 
+# Boxplot: Visualisiert Median, Quartile und Ausreißer pro Person
+# Die gestreuten Punkte (Jitter-Plot) zeigen die einzelnen Messwerte
+# und machen die Stichprobengröße sichtbar.
 personen = ['Jim', 'Jane', 'PI', 'Jacky']
 daten = [person_df[person_df["Person"] == p]['Ausbeute'].values for p in personen]
 fig, ax = plt.subplots(figsize=(5, 4))
 ax.boxplot(daten, tick_labels=personen)
 for i, x in enumerate(daten, start=1):
+    # Leichte horizontale Streuung (Jitter), damit überlappende Punkte sichtbar werden
     ax.scatter(np.random.normal(i, 0.05, len(x)), x, s=15, alpha=0.6)
 ax.set_ylabel('Ausbeute (mg/L)')
 ax.set_title('BL21, TB, 24 h')
-#fig.savefig('plots/a3_boxplot.svg')
-plt.show()
+#plt.savefig('plots/a3_boxplot.svg', bbox_inches='tight')
+plt.close()
 
-kenn = person_df.groupby('Person').agg(['mean', 'var'])
+# Berechnung der deskriptiven Kenngrößen: Mittelwert und Varianz pro Person
+# .agg() wendet die Funktionen auf jede Gruppe an
+kenn = person_df.groupby('Person')['Ausbeute'].agg(['mean', 'var'])
+print('Mittelwert und Varianz pro Person:')
 print(kenn)
 
 
@@ -65,38 +66,87 @@ print(kenn)
 # auf die erzielten Ausbeuten des Enzyms besteht!
 
 """
-Modell I: es gibt eine festgelegte Anzahl an Stufen
+HINTERGRUND: Modell I vs. Modell II bei der einfaktoriellem ANOVA
 
-Modell II: es gibt eine variable Anzahl an Stufen
+Modell I (fixed effects / feste Effekte):
+  - Es gibt eine festgelegte Anzahl an Stufen, die gezielt ausgewählt wurden.
+  - Die Frage ist: Unterscheiden sich GENAU diese Stufen voneinander?
+  - Beispiel: Man vergleicht gezielt 4 bestimmte Enzymstämme.
 
-Bei Modell II sind die Stufen nicht gezielt gewählt. Sie sind eine Zufallsauswahl aus einer größeren Grundgesamtheit möglicher Stufen. 
-Die Frage ist nicht, ob genau diese vier sich unterscheiden. Die Frage ist, ob die Person überhaupt eine Streuquelle ist.
+Modell II (random effects / zufällige Effekte):
+  - Die Stufen sind eine Zufallsauswahl aus einer größeren Grundgesamtheit möglicher Stufen.
+  - Die Frage ist nicht, ob genau diese vier Personen sich unterscheiden.
+  - Die Frage ist: Ist die Person überhaupt eine relevante Streuquelle?
+  - Man will generalisieren: Würde man andere Personen aus dem Labor nehmen,
+    gäbe es dann auch Unterschiede?
 
-Getestet wird die Varianz des Personeneffekts:
-𝐻1∶ 𝜎2𝐴 >0 
-𝐻0∶ 𝜎2𝐴=0
+Hypothesen beim Modell II:
+  H0: σ²_A = 0   (Die Varianz des Personeneffekts ist 0 → Person macht keinen Unterschied)
+  H1: σ²_A > 0   (Die Varianz des Personeneffekts ist > 0 → Person ist eine Streuquelle)
 
-Faktor: Stamm
-Stufen: einzelne Stämme (Ausprägungen)
-Werte: Ausbeute
+Faktor: Person (Experimentator)
+Stufen: Jim, Jane, PI, Jacky (Ausprägungen)
+Werte: Ausbeute (mg/L)
 """
 
+# VORAUSSETZUNGEN PRÜFEN
+# 1. Normalverteilungstest (Shapiro-Wilk) pro Gruppe
+#    H0: Die Daten sind normalverteilt.
+#    p > 0.05 → H0 wird NICHT verworfen → Normalverteilung ist plausibel.
+print('=== Shapiro-Wilk Normalverteilungstest ===')
 for p, x in zip(personen, daten):
-    print(p, 'Shapiro-Wilk p =', round(stats.shapiro(x).pvalue, 3))
-print('Levene p-Wert (mean): ', stats.levene(*daten, center='mean').pvalue)
-#todo: evtl. nur mean? haben in der VL nur mean verwendet
-print('Levene p-Wert (median):', stats.levene(*daten, center='median').pvalue)
+    sw_p = stats.shapiro(x).pvalue
+    print(f'{p}: Shapiro-Wilk p = {sw_p:.3f}  -> {"Normalverteilung plausibel" if sw_p > 0.05 else "KEINE Normalverteilung"}')
 
-#ANOVA
+# 2. Varianzhomogenitätstest (Levene)
+#    H0: Die Varianzen sind gleich (homogen).
+#    p > 0.05 → H0 wird NICHT verworfen → Varianzen sind homogen.
+#    scipy.stats.levene() verwendet standardmäßig den Median (robuster).
+#    In der VL wurde center='mean' verwendet — hier beide zum Vergleich.
+print('\n=== Levene Varianzhomogenitätstest ===')
+lev_mean = stats.levene(*daten, center='mean')
+lev_median = stats.levene(*daten, center='median')
+print(f'Levene p-Wert (mean)   : {lev_mean.pvalue:.4f}  -> {"Varianzen homogen" if lev_mean.pvalue > 0.05 else "Varianzen HETEROGEN"}')
+print(f'Levene p-Wert (median) : {lev_median.pvalue:.4f}  -> {"Varianzen homogen" if lev_median.pvalue > 0.05 else "Varianzen HETEROGEN"}')
+
+
+# ANOVA — F-Test (klassisch für Modell I, aber F-Test-Statistik
+# ist bei Modell II identisch; nur die INTERPRETATION unterscheidet sich)
+# WICHTIG: Der F-Test (scipy.stats.f_oneway) berechnet dieselbe
+# Teststatistik wie die ANOVA-Tabelle. Bei Modell II (random effects)
+# ist die F-STATISTIK formal gleich, aber die Hypothesen und
+# Interpretation sind anders (s. oben).
+# ACHTUNG: Bei HETEROGENEN Varianzen (Levene p < 0.05) ist der
+# klassische F-Test problematisch! In diesem Fall sollte man
+# robuste Alternativen (Welch-ANOVA) oder Mixed-Effects-Modelle nutzen.
+print('\n=== ANOVA F-Test ===') #todo: wirklich F oder eher f?
 anova = stats.f_oneway(*daten)
-print(f'ANOVA f-Wert: {anova.statistic}, p-Wert: {anova.pvalue}')
-k, n = len(daten), len(daten[0])
-print('ν1 =', k - 1, ' ν2 =', k * (n - 1))
+print(f'ANOVA F-Wert: {anova.statistic:.4f}, p-Wert: {anova.pvalue:.6f}')
+if anova.pvalue < 0.05:
+    print('Ergebnis: signifikanter Unterschied zwischen den Personen (alpha = 0.05)')
+else:
+    print('Ergebnis: KEIN signifikanter Unterschied zwischen den Personen (alpha = 0.05)')
+
+# Freiheitsgrade
+k = len(daten)  # Anzahl der Gruppen
+n = len(daten[0])  # Probengröße pro Gruppe (hier gleich groß)
+print(f'Freiheitsgrade: df_zwischen = {k - 1}, df_innerhalb = {k * (n - 1)}')
 
 
+# MIXED-EFFECTS-MODELL (Random-Effects-Modell für Modell II)
+
+# Das MixedLM-Modell ist die korrekte Methode für Modell II (random effects).
+# Es schätzt direkt die Varianzkomponenten:
+#   - Group Var (σ²_A): Varianz zwischen den Personen (Personeneffekt)
+#   - Scale (σ²_E): Residuale Varianz (innerhalb der Personen)
+# Wenn σ²_A signifikant > 0 ist, gibt es einen Personeneffekt.
+print('\n=== Mixed-Effects-Modell (Random Effects) ===')
 mm = smf.mixedlm('Ausbeute ~ 1', data=person_df, groups=person_df['Person']).fit(reml=True)
-print(mm.summary()) # 'Group Var' ≈ σ²_A, 'Scale' ≈ σ²_E
-print(mm.random_effects) # geschätzte Effekte der einzelnen Personen
+print(mm.summary())
+# 'Group Var' ≈ σ²_A (Varianz des Personeneffekts)
+# 'Scale' ≈ σ²_E (residuale Varianz)
+print('\nGeschätzte Effekte der einzelnen Personen (BLUPs):')
+print(mm.random_effects)
 
 
 
@@ -105,6 +155,27 @@ print(mm.random_effects) # geschätzte Effekte der einzelnen Personen
 # welche Stufe (d.h. welche Person) diesen signifikanten Einfluss ausübt!
 # (Eine Lösung kann entweder auf Basis der vorhandenen Daten erfolgen [das ist anspruchsvoll und am besten mit Python adressierbar],
 # oder Sie schlagen ein neues Experiment vor, mit dem eine Beantwortung möglich wäre.)
+
+# ---------------------------------------------------------------
+# ALTERNATIVE: Neues Experiment zur Identifikation
+# ---------------------------------------------------------------
+# Falls die vorhandenen Daten für Post-hoc-Tests zu schwach sind
+# (z.B. zu kleine Stichprobe), kann man ein neues Experiment vorschlagen:
+#
+# Vorschlag: Kreuzversuch (Crossover-Design)
+# - Jede Person führt JEDES Experiment unter identischen Bedingungen durch.
+# - Besser: Mehrere Personen führen das GLEICHE Experiment wiederholt durch.
+# - Mit einem balanced Design (gleiche Wiederholungen pro Person)
+#   kann man dann gezielt Paarvergleiche mit hoher Power durchführen.
+#
+# Konkret: 4 Personen × 12 Wiederholungen = 48 Messungen
+# → Erhöhte Power für Post-hoc-Tests
+# → Bessere Schätzung der Varianzkomponenten
+print('\n=== Empfehlung für neues Experiment ===')
+print('Für eine zuverlässige Identifikation der ausübenden Person(en)')
+print('wird ein Kreuzversuch mit mehr Wiederholungen pro Person empfohlen.')
+print('Aktuell: 12 Messungen pro Person -> Power für Post-hoc ist begrenzt.')
+print('Empfehlung: mind. 20 Messungen pro Person für ausreichende Power.')
 
 
 
