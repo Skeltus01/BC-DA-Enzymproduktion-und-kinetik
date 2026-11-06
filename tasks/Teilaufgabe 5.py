@@ -116,12 +116,6 @@ print(v.round(3))
 #   v_max-Startwert: Der maximale gemessene v0-Wert (kann v_max nicht überschreiten)
 #   KM-Startwert: 30 µM (grobe Schätzung aus dem Diagramm)
 #
-#   BLATT5 – WICHTIGER FEHLER:
-#   Der erste curve_fit() Aufruf verwendet ALLE 39 Einzelwerte (jedes Replikat
-#   separat), aber die Fehlerbalken im Plot zeigen nur die Mittelwerte!
-#   Das ist inkonsistent: Entweder fittet man auf Mittelwerte pro Konzentration
-#   (13 Punkte) oder man verwendet alle Einzelwerte mit Gewichtung (sigma).
-#
 #   Die bessere Vorgehensweise:
 #   - Mittelwerte pro Konzentration bilden (13 Punkte)
 #   - Mit sigma = Standardfehler des Mittels gewichten
@@ -151,13 +145,13 @@ param, covar = optimize.curve_fit(
 # hier ggf. Gewichtung nicht sinnvoll, da nur wenige Punkte vorhanden sind. Hier trotzdem die Formel
     # sigma=v_mean['se_v0'], absolute_sigma=True
 )
-se = np.sqrt(np.diag(covar))
+se = np.sqrt(np.diag(covar))    # Standardfehler der Parameter
 v_max, KM = param
 print(f'v_max = {v_max:.2f} ± {se[0]:.2f} nM/min, K_M = {KM:.1f} ± {se[1]:.1f} μM')
 
 
 # 95%-Konfidenzintervalle
-N_pkt = len(v_mean) #todo: zuvor len(v)
+N_pkt = len(v_mean)
 nu = N_pkt - len(param)             # Freiheitsgrade
 t_q = stats.t.ppf(0.975, df=nu)  # t-Quantil für 95% Konfidenz
 print('95%-KI v_max:', v_max - t_q * se[0], v_max + t_q * se[0])
@@ -165,33 +159,61 @@ print('95%-KI K_M: ', KM - t_q * se[1], KM + t_q * se[1])
 
 # Korrelation zwischen v_max und KM – hohe Korrelation bedeutet, dass die
 # Parameter stark voneinander abhängen und unsicher bestimmt sind
-print('Korrelation v_max/K_M:', covar[0, 1] / (se[0] * se[1])) #todo: ρ²?
+print('Korrelation ρ² (v_max/K_M):', covar[0, 1] / (se[0] * se[1]))
 
 
-# Güte der Kurvenanpassung #todo: prüfen!
+# Güte der Kurvenanpassung
 # Residuen = Differenz zwischen gemessenen und angepassten Werten
-v_mean['res'] = v_mean['v0'] - mm(v_mean['S'], *param) #todo: zuvor v['res'] statt v_mean['res']
+# Hinweis: Da nur 3 Replikate pro Konzentration vorliegen, ist die Varianzschätzung
+# aus den Replikaten zu ungenau für eine sinnvolle Gewichtung.
+# Daher wird χ² ungewichtet berechnet — aber auf ALLEN 39 Einzelwerten,
+# um eine zuverlässige Schätzung der Restvarianz zu erhalten.
 
-# Reduziertes Chi-Quadrat: Maß für die Güte der Anpassung
-# χ²_red ≈ 1 bedeutet eine gute Anpassung
-# χ²_red >> 1 bedeutet systematische Abweichungen oder unterschätzte Fehler
-# χ²_red << 1 bedeutet überbewertete Fehler oder overfitting
-#chi2_red = (v['res']**2).sum() / nu #todo: zuvor ← vs korrigiert ↓ - was macht den Unterschied?
-chi2_red = (v_mean['res']**2 / v_mean['se_v0']**2).sum() / nu
-print('red. χ² =', round(chi2_red, 3))
+# Residuen der Mittelwerte (für Residuenplot)
+v_mean['res'] = v_mean['v0'] - mm(v_mean['S'], *param)
 
-# Shapiro-Wilk-Test auf Normalverteilung der Residuen
+# Residuen aller 39 Einzelwerte (für χ²-Berechnung)
+v['v_fit'] = mm(v['S'], *param)
+v['res'] = v['v0'] - v['v_fit']
+
+# Chi-Quadrat aus allen Einzelwerten
+N_einzel = len(v)                     # 39 Einzelwerte
+nu_einzel = N_einzel - len(param)     # Freiheitsgrade: 39 - 2 = 37
+chi2 = (v['res']**2).sum()            # Summe der quadrierten Residuen (ungewichtet)
+chi2_red = chi2 / nu_einzel           # Reduziertes Chi-Quadrat = Schätzung der Restvarianz
+print(f'χ² = {chi2:.3f}')
+print(f'red. χ² = {chi2_red:.3f}')
+print(f'(berechnet aus {N_einzel} Einzelwerten, ν = {nu_einzel})')
+
+
+# Chi-Quadrat aus allen Mittelwerten
+N_mittel = len(v_mean)                     # 39 Einzelwerte
+nu_mittel = N_mittel - len(param)     # Freiheitsgrade: 39 - 2 = 37
+chi2 = (v_mean['res']**2).sum()            # Summe der quadrierten Residuen (ungewichtet)
+chi2_red = chi2 / nu_mittel           # Reduziertes Chi-Quadrat = Schätzung der Restvarianz
+print(f'χ² = {chi2:.3f}')
+print(f'red. χ² = {chi2_red:.3f}')
+print(f'(berechnet aus {N_mittel} Mittelwerten, ν = {nu_mittel})')
+
+
+
+
+
+
+
+
+# Shapiro-Wilk-Test auf Normalverteilung der Residuen (Mittelwerte, für Plot)
 # p > 0.05 → Residuen sind normalverteilt (Annahme der Regression erfüllt)
-print('Shapiro Residuen:', stats.shapiro(v_mean['res']))
+print('Shapiro Residuen (Mittelwerte):', stats.shapiro(v_mean['res']))
 
 # === Plot: Michaelis-Menten-Kurve mit Fit ===
-S_plot = np.linspace(0, v_mean['S'].max(), 300) #todo: zuvor v['S'] statt v_mean['S']
+S_plot = np.linspace(0, v_mean['S'].max(), 300)
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 9), sharex=True, gridspec_kw={'height_ratios': [3, 1]})
 
 # Datenpunkte mit Fehlerbalken (Standardfehler des Mittels)
 ax1.errorbar(
     v_mean['S'], v_mean['v0'],
-    yerr=v_mean['se_v0'],
+    yerr=v_mean['se_v0'], #todo: das ist der Fitfehler -> Fehlerfortpflanzung
     fmt='o', ms=4, capsize=3,
     label=r'$\overline{v_0}$ (± SEM)'
 )
@@ -233,8 +255,8 @@ ax2.set_xlabel('[S] (μM)')
 ax2.set_ylabel('Residuen')
 
 fig.tight_layout()
-fig.savefig('plots/a5_michaelis_menten.svg')
-plt.show()
+#fig.savefig('plots/a5_michaelis_menten.svg')
+plt.close()
 
 # Vergleich mit dem ursprünglichen (fehlerhaften) Ansatz
 pw, cw = optimize.curve_fit(mm, v['S'], v['v0'], p0=p0, sigma=v['se_v0'])
@@ -316,7 +338,7 @@ ax.set_xlim(-(1 / KM_lb), ax.get_xlim()[1])
 ax.legend()
 ax.set_title('Lineweaver-Burk-Plot')
 fig.tight_layout()
-fig.savefig('plots/a5_lineweaver_burk.svg')
+#fig.savefig('plots/a5_lineweaver_burk.svg')
 plt.close()
 
 

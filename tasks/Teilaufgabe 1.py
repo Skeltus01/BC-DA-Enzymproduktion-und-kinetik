@@ -96,8 +96,7 @@ def kennzahlen(values:pd.Series):
     var = values.var(ddof=1)
     median = values.median()
 
-    q1_lin = values.quantile(0.25)  # lineare Interpolation (pandas-Standard)
-    q3_lin = values.quantile(0.75)  # lineare Interpolation
+    q1_lin, q3_lin = values.quantile([0.25, 0.75])      # lineare Interpolation (pandas-Standard)
 
     values_sort = values.sort_values()  # np.percentile sortiert intern selbst, hier nur zur Veranschaulichung
     q1, q3 = np.percentile(values_sort, [25, 75], method='midpoint')  # Midpoint: Mittelwert der beiden mittleren Werte an der Quantil-Stelle
@@ -105,8 +104,8 @@ def kennzahlen(values:pd.Series):
     print(f"Mittelwert {str(values.name)}: {mean:.4f}")
     print(f"Varianz {str(values.name)}: {var:.4f}")
     print(f"Median {str(values.name)}: {median:.4f}")
-    print(f"Quartile {str(values.name)} (linear): (Q1/Q3): {q1_lin:.4f}/{q3_lin:.4f}")
-    print(f"Quartile {str(values.name)} (Q1/Q3): {q1:.4f}/{q3:.4f}")
+    print(f"Quartile {str(values.name)} Q1/Q3 (linear): {q1_lin:.4f}/{q3_lin:.4f}")
+    print(f"Quartile {str(values.name)} Q1/Q3 (midpoint): {q1:.4f}/{q3:.4f}")
     print()
 
 

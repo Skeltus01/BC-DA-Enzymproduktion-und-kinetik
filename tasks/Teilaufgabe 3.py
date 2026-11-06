@@ -156,26 +156,5 @@ print(mm.random_effects)
 # (Eine Lösung kann entweder auf Basis der vorhandenen Daten erfolgen [das ist anspruchsvoll und am besten mit Python adressierbar],
 # oder Sie schlagen ein neues Experiment vor, mit dem eine Beantwortung möglich wäre.)
 
-# ---------------------------------------------------------------
-# ALTERNATIVE: Neues Experiment zur Identifikation
-# ---------------------------------------------------------------
-# Falls die vorhandenen Daten für Post-hoc-Tests zu schwach sind
-# (z.B. zu kleine Stichprobe), kann man ein neues Experiment vorschlagen:
-#
-# Vorschlag: Kreuzversuch (Crossover-Design)
-# - Jede Person führt JEDES Experiment unter identischen Bedingungen durch.
-# - Besser: Mehrere Personen führen das GLEICHE Experiment wiederholt durch.
-# - Mit einem balanced Design (gleiche Wiederholungen pro Person)
-#   kann man dann gezielt Paarvergleiche mit hoher Power durchführen.
-#
-# Konkret: 4 Personen × 12 Wiederholungen = 48 Messungen
-# → Erhöhte Power für Post-hoc-Tests
-# → Bessere Schätzung der Varianzkomponenten
-print('\n=== Empfehlung für neues Experiment ===')
-print('Für eine zuverlässige Identifikation der ausübenden Person(en)')
-print('wird ein Kreuzversuch mit mehr Wiederholungen pro Person empfohlen.')
-print('Aktuell: 12 Messungen pro Person -> Power für Post-hoc ist begrenzt.')
-print('Empfehlung: mind. 20 Messungen pro Person für ausreichende Power.')
-
 
 

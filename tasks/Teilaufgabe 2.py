@@ -238,6 +238,6 @@ print(f"ANOVA: f = {anova_f:.4f}, p = {anova_p:.4e}")
 # Gruppen mit derselben Buchstaben-Partition unterscheiden sich nicht signifikant.
 tukey = smm.pairwise_tukeyhsd(endog=df_24.loc[:, 'Ausbeute'], groups=df_24['Stamm'], alpha=0.01)
 print(tukey)
-
-# von α = 0.05, ob die Einflußfaktoren Expressionsstamm und Expressionsdauer alleine oder in Kombination
-# signifikant die Ausbeute beeinflussen! Falls ja, führen Sie eine Analyse der einzelnen Faktorstufen durch!
+# BL21 am besten
+# LOBSTR am schlechtesten
+# Gold/Rosetta/C41 etwa gleich auf
