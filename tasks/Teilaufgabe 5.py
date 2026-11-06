@@ -94,10 +94,35 @@ for S in konz:
 v = pd.DataFrame(ergebnisse)
 print(v.round(3))
 
-# Qualitätskontrolle – Prüfen Sie, ob alle R²-Werte nahe bei 1 liegen.
-# Niedrige R²-Werte deuten darauf hin, dass die Anfangsphase nicht linear ist
-# oder dass Messfehler vorliegen.
-# print(v[v['R2'] < 0.99][['S', 'rep', 'R2']])
+#Produktverläufe für 3 Beispielkonzentrationen,
+# alle Replikate mit ihren Fitgeraden P(t) = P0 + v0·t
+G3, G, G2 = '#00573A', '#009260', '#7CC4A4'      # Grüntöne der Folienvorlage
+
+fig, ax = plt.subplots(figsize=(6.3, 4.55), dpi=220)
+for S, farbe in [(110, G3), (32, G), (4, G2)]:
+    steigungen = []
+    for rep, marker in zip([1, 2, 3], ['o', 's', '^']):   # Symbol = Replikat
+        d = get(S, rep)
+        t = d["Time (min)"]
+        P = d["Product (nM)"]
+        fit = stats.linregress(t, P)
+        steigungen.append(fit.slope)
+        ax.plot(t, P, marker, color=farbe, ms=5, mec='white', mew=0.5)
+        tt = np.array([0, 10.5])                            # Gerade bis knapp über 10 min
+        ax.plot(tt, fit.intercept + fit.slope * tt, '-', color=farbe, lw=1.2, alpha=0.8)
+    # Beschriftung rechts neben den Geraden, auf Höhe der mittleren Steigung
+    ax.text(10.7, np.mean(steigungen) * 10.5, f'{S} µM',
+            color=farbe, va='center', fontsize=11, fontweight='bold')
+
+ax.set_xlim(0, 12.6)
+ax.set_ylim(bottom=-5)
+ax.set_xlabel('t (min)')
+ax.set_ylabel('[P] (nM)')
+ax.set_title('Produktbildung, 3 von 13 Substratkonzentrationen', loc='left')
+ax.spines[['top', 'right']].set_visible(False)
+fig.tight_layout()
+fig.savefig('plots/a5_progress_beispiele.png')
+plt.close(fig)
 
 
 ## 5.ii
@@ -257,14 +282,6 @@ ax2.set_ylabel('Residuen')
 fig.tight_layout()
 #fig.savefig('plots/a5_michaelis_menten.svg')
 plt.close()
-
-# Vergleich mit dem ursprünglichen (fehlerhaften) Ansatz
-pw, cw = optimize.curve_fit(mm, v['S'], v['v0'], p0=p0, sigma=v['se_v0'])
-print(f'\nVergleich – gewichteter Fit auf Einzelwerte:')
-print(f'v_max = {pw[0]:.2f} ± {np.sqrt(cw[0,0]):.2f} nM/min')
-print(f'K_M   = {pw[1]:.1f} ± {np.sqrt(cw[1,1]):.1f} μM')
-
-
 
 # 5.iii
 # Transformieren Sie die Daten nun in die doppelt-reziproke Form nach Lineweaver-Burk!
