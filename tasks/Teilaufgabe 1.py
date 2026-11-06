@@ -330,13 +330,9 @@ else:
     test_name = "Student"
 
 if p_value < alpha:
-    # Signifikanter Unterschied gefunden — welche Richtung?
-    if lb_values.mean() > tb_values.mean():
-        print(f"\n{test_name}-Test: H_0 wird verworfen. LB liefert signifikant höhere Ausbeute als TB (α = {alpha}).")
-    else:
-        print(f"\n{test_name}-Test: H_0 wird verworfen. TB liefert signifikant höhere Ausbeute als LB (α = {alpha}).")
+    print(f"\n{test_name}-Test: H_0 wird verworfen. TB und LB unterscheiden sich signifikant (p = {p_value:.4f} < α = {alpha}).")
 else:
-    print(f"\n{test_name}-Test: H_0 kann nicht verworfen. Kein signifikanter Unterschied zwischen LB und TB (α = {alpha}).")
+    print(f"\n{test_name}-Test: H_0 kann nicht verworfen werden. Kein signifikanter Unterschied zwischen LB und TB (p = {p_value:.4f} > α = {alpha}).")
 print()
 
 # endregion ############################################################################################################
