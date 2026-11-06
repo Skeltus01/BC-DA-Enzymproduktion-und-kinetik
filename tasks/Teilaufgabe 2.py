@@ -1,20 +1,12 @@
 # Anknüpfend an die vorherige Fragestellung wird nun für das gleiche Enzym (in TB Medium) getestet,
 # welche Einflüsse die Faktoren verwendeter Expressionsstamm (E. coli BL21, LOBSTR, BL21 Rosetta, C41, BL21 Gold)
 # und Expressionsdauer (bis zu 48 h) auf die Ausbeute haben. Daten hierzu finden sich im Tab ‚production‘.
-from math import log
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas
-import scipy
 import scipy.stats as stats
-import math
 import pandas as pd
-import statsmodels.api as sm
 import statsmodels.stats.multicomp as smm
-import statsmodels.formula.api as smf
-from fontTools import feaLib
-from matplotlib.ticker import MultipleLocator
 
 df = pd.read_csv(
     "data/production.csv",
@@ -54,23 +46,25 @@ bl21_gold = stamm['BL21 Gold']
 # Stellen Sie die Daten wiederum in geeigneter Weise grafisch dar und bestimmen die gängigen statistischen Kenngrößen Mittelwert
 # und Varianz für alle Bedingungen!
 
-#Plot
+# Plot: Mittelwert ± Standardabweichung über die Expressionsdauer für jeden Stamm
 fig, ax = plt.subplots(figsize=(6, 4), layout='constrained')
-for stamm, daten in stamm.items():
-    m = daten.mean()
-    s = daten.std()
-    ax.errorbar(m.index, m.values, yerr=s.values, marker='o', capsize=3, label=stamm)
+for name, values in stamm.items():
+    m = values.mean()
+    s = values.std(ddof=1)
+    ax.errorbar(m.index, m.values, yerr=s.values, marker='o', capsize=3, label=name)
 ax.set_xlabel('Expressionsdauer (h)')
 ax.set_ylabel('Ausbeute (mg/L)')
 ax.set_xticks([6, 12, 18, 24, 48])
-ax.set_ylim(0,7)
+ax.set_ylim(0, 7)
 ax.legend(title='Expressionsstamm', frameon=True, fontsize='small', title_fontsize='small')
 #fig.savefig('plots/a2_verlauf.svg', bbox_inches='tight')
 plt.show()
 
-#Boxplot
+# Boxplot: Verteilung der Ausbeute pro Stamm für jeden Zeitpunkt
+# Jeder Boxplot zeigt Median, Quartile (25%-75%), Whisker (1.5*IQR) und Ausreißer
 fig, axes = plt.subplots(1, 5, figsize=(15, 3.5), sharey=True)
 for ax, z in zip(axes, zeiten):
+    # Für jeden Zeitpunkt z: sammle die Ausbeute-Werte aller Stämme als separate Gruppen
     daten = [staemme_df[(staemme_df.Zeit == z) & (staemme_df.Stamm == s)]['Ausbeute'].dropna() for s in namen]
     ax.boxplot(daten, tick_labels=namen)
     ax.set_title(f'{z} h'); ax.tick_params(axis='x', rotation=60)
@@ -79,6 +73,8 @@ fig.tight_layout()
 #fig.savefig('plots/a2_boxplots.svg')
 plt.show()
 
+# Mittelwerte & Varianzen für alle Kombinationen von Stamm und Zeitpunkt
+# groupby gruppiert nach den Spalten 'Stamm' und 'Zeit', agg berechnet mean und var pro Gruppe
 print('Mittelwerte & Varianzen')
 print(staemme_df.groupby(['Stamm', 'Zeit'])['Ausbeute'].agg(['mean', 'var']))
 
@@ -86,34 +82,45 @@ print(staemme_df.groupby(['Stamm', 'Zeit'])['Ausbeute'].agg(['mean', 'var']))
 
 # 2.ii
 # Berechnen Sie für jeden Stamm und jeden Zeitpunkt 95%-Konfidenzintervalle für die mittlere Ausbeute!
-alpha = 0.05                    #α
-confidence = 1 - alpha          #1-α  -Konfidenzniveau
+
+"""
+Das Konfidenzintervall (KI) gibt den Bereich an, in dem der wahre Populationsmittelwert mit
+einer Wahrscheinlichkeit von (1-α) liegt. Bei kleinen Stichproben (n < 30) wird die t-Verteilung
+statt der Normalverteilung verwendet, da diese den größeren Unsicherheitsbereich bei kleinen n berücksichtigt.
+"""
+
+alpha = 0.05                    # Signifikanzniveau α
+confidence = 1 - alpha          # Konfidenzniveau 1-α = 0.95 (95%)
 
 print('95%-Konfidenzintervalle für die mittlere Ausbeute:')
 
 teile = []
 for (stamm, zeit), values in staemme_df.groupby(['Stamm', 'Zeit'])['Ausbeute']:
-    mean = values.mean()
-    n = len(values)
-    dof = n - 1
-    s = values.std(ddof=1)
-    sem = s / np.sqrt(n)
-    q = stats.t.ppf(1-alpha/2, df=dof)
+    mean = values.mean()        # Stichprobenmittelwert x̄
+    n = len(values)             # Stichprobengröße
+    dof = n - 1                 # Freiheitsgrade ν = n-1 für die t-Verteilung
+    s = values.std(ddof=1)      # Stichprobenstandardabweichung
+    sem = s / np.sqrt(n)        # Standardfehler des Mittelwerts (SEM = s/√n)
+    q = stats.t.ppf(1-alpha/2, df=dof)  # t-Quantil für 1-α/2 (zweiseitig)
+
+    # Konfidenzintervall: [x̄ - t·SEM, x̄ + t·SEM]
     g0, g1 = stats.t.interval(1 - alpha, df=dof, loc=mean, scale=sem)
     print(f"{stamm}, {zeit}: Quantil t_(ν,1-α/2): {q:.4f}")
     print(f"{stamm}, {zeit}: {(1 - alpha) * 100:.0f}%-Konfidenzintervall: [{g0:.4f}, {g1:.4f}]")
     teile.append({'Stamm': stamm, 'Zeit': zeit, 'Mittelwert': mean, 'g0': g0, 'g1': g1})
 ki_df = pd.DataFrame(teile).set_index(['Stamm', 'Zeit'])
-teile = sorted(staemme_df['Zeit'].unique())
 
+# Plot: Mittelwert ± 95%-Konfidenzintervall über die Expressionsdauer
+# Im Gegensatz zum Plot in 2.i (Mittelwert ± Standardabweichung) zeigt das KI die Unsicherheit
+# des Mittelwerts selbst — schmalere Balken bei größeren Stichproben, da SEM = s/√n.
 fig, ax = plt.subplots(figsize=(6, 4), layout='constrained')
 for name in namen:
     k = ki_df.loc[name]
     ax.errorbar(k.index, k['Mittelwert'], yerr=[k['Mittelwert'] - k['g0'], k['g1'] - k['Mittelwert']], marker='o', capsize=3, label=name)
 ax.set_xlabel('Expressionsdauer (h)')
-ax.set_ylabel('Ausbeute (mg/L), Mittel ± 95-%-KI')
+ax.set_ylabel('Ausbeute (mg/L), Mittel ± 95%-KI')
 ax.set_xticks(zeiten)
-ax.set_ylim(0,7)
+ax.set_ylim(0, 7)
 ax.legend(title='Expressionsstamm', frameon=True, fontsize='small', title_fontsize='small')
 #fig.savefig('plots/a2_verlauf_KI.svg', bbox_inches='tight')
 plt.show()
@@ -125,85 +132,112 @@ plt.show()
 # führen Sie nun einen adäquaten post hoc-Test durch, um festzustellen, welche Stufe(n) des Faktors
 # hier maßgeblich sind/ist!
 
-# Voraussetzung:
-# 1. Feste Stufen (fest gewählte Stämme) -> Modell 1
-# 2. unabhängige, zufällige Fehler e_ij
-# 3. Normalverteilung der Messwerte
-# 4. Varianzhomogenität
+"""
+Die einfaktorielle ANOVA (One-Way ANOVA) prüft, ob sich die Mittelwerte mehrerer Gruppen
+signifikant unterscheiden. Die Nullhypothese H0: Alle Gruppenmittelwerte sind gleich.
+Alternativhypothese H1: Mindestens ein Gruppenmittelwert unterscheidet sich.
 
-df_24 = staemme_df[staemme_df['Zeit'] == 24] #temporär, um alle Daten auf 24h zu reduzieren
+Voraussetzungen der ANOVA:
+1. Feste Stufen (fixed effects, Modell I) — die gewählten Stämme sind bewusst und fest gewählt
+2. Unabhängige, zufällige Fehler e_ij — Messungen sind unabhängig voneinander
+3. Normalverteilung der Messwerte innerhalb jeder Gruppe — wird mit Shapiro-Wilk geprüft
+4. Varianzhomogenität — die Varianzen der Gruppen sind gleich, wird mit Levene-Test geprüft
+"""
+
+df_24 = staemme_df[staemme_df['Zeit'] == 24]  # Filtert alle Daten auf den Zeitpunkt 24 h
 staemme_24 = [df_24[df_24['Stamm'] == s]['Ausbeute'].values for s in namen]
+# Ausgabe: Stammname, Stichprobengröße, Mittelwert, Varianz (ddof=1)
 for s, g in zip(namen, staemme_24):
     print(s, len(g), g.mean().round(3), g.var(ddof=1).round(3))
 
-### Shapiro-Wilk
-#print(staemme_df)
+### Shapiro-Wilk-Test: Prüft die Normalverteilungsannahme pro Gruppe
+# H0: Die Daten sind normalverteilt. Bei p > α kann H0 nicht abgelehnt werden → Normalverteilung angenommen.
 for name, value in zip(namen, staemme_24):
     shapiro = stats.shapiro(value)
     print(f"Shapiro-Wilk Test for {name}: W = {shapiro.statistic:.4f}, p = {shapiro.pvalue:.4f}")
     print()
 
-# Residues = Messwert - Gruppenmittel
+# TODO: Q-Q-Plot sinnvoll?
+
+# Residuen = Messwert - Gruppenmittelwert
+# Die Residuen sollten normalverteilt sein, wenn die ANOVA-Voraussetzung erfüllt ist.
 res = np.concatenate([value - value.mean() for value in staemme_24])
 print(f'Shapiro Residuen: p = {stats.shapiro(res).pvalue:.4f}')
+# Q-Q-Plot (Quantile-Quantile-Plot) der Residuen: Bei Normalverteilung liegen die Punkte auf der Diagonalen
 stats.probplot(res, plot=plt)
 plt.show()
 
-### Levene
+### Levene-Test: Prüft die Varianzhomogenität
+# H0: Die Varianzen aller Gruppen sind gleich. Bei p > α kann H0 nicht abgelehnt werden → Varianzhomogenität angenommen.
 levene = stats.levene(*staemme_24, center='mean')
 print(f"Levene: p = {levene.pvalue:.4f}")
 
-### ANOVA
+### ANOVA — manuelle Berechnung der Varianzanalyse
 
+"""
+Die ANOVA zerlegt die Gesamtvarianz in:
+- Varianz zwischen den Gruppen (Faktor) — wird durch den Einflussfaktor (Stamm) erklärt
+- Varianz innerhalb der Gruppen (Fehler) — unexplained, zufällige Streuung
 
+Effektgröße eta² (η²): Anteil der Gesamtvarianz, der durch den Faktor erklärt wird.
+η² = QS_Faktor / (QS_Faktor + QS_Fehler) = QS_Faktor / QS_Gesamt
+"""
+
+# Gesamtmittelwert — Mittelwert aller Messwerte bei 24 h
 mean_ges = staemme_df.loc[staemme_df['Zeit'] == 24, 'Ausbeute'].mean()
 print(mean_ges)
 
+# Quadratsumme Faktor (zwischen den Gruppen): Misst die Streuung der Gruppenmittelwerte um den Gesamtmittelwert
+# QS_Faktor = Σ n_i · (x̄_i - x̄_ges)²
 qs_faktor = sum(len(value) * (value.mean() - mean_ges)**2 for value in staemme_24)
 print(f"QS Faktor: {qs_faktor:.4f}")
+
+# Quadratsumme Fehler (innerhalb der Gruppen): Misst die Streuung innerhalb jeder Gruppe um den Gruppenmittelwert
+# QS_Fehler = Σ Σ (x_ij - x̄_i)²
 qs_fehler = sum(((value - value.mean())**2).sum() for value in staemme_24)
 print(f"QS Fehler: {qs_fehler:.4f}")
 
-#Berechnung der Freiheitsgrade
+# Berechnung der Freiheitsgrade
+# k = Anzahl der Gruppen (Stämme), N = Gesamtstichprobengröße
 k, N = len(namen), sum(len(s) for s in staemme_24)
-dof_faktor = k - 1
-dof_fehler = N - k
+dof_faktor = k - 1      # Freiheitsgrade zwischen Gruppen
+dof_fehler = N - k       # Freiheitsgrade innerhalb Gruppen
 print(f"Freiheitsgrade Faktor: {dof_faktor}, Freiheitsgrade Fehler: {dof_fehler}")
 
-#Berechnung der mittleren Quadratsummen:
+# Berechnung der mittleren Quadratsummen
+# MQ = QS / df — normalisiert die Quadratsumme durch die Freiheitsgrade
 mq_faktor = qs_faktor / dof_faktor
 mq_fehler = qs_fehler / dof_fehler
 print(f"MQ Faktor: {mq_faktor:.4f}, MQ Fehler: {mq_fehler:.4f}")
 
-#f-Wert
+# F-Wert: Verhältnis der Varianz zwischen Gruppen zur Varianz innerhalb Gruppen
+# Unter H0 sollte F ≈ 1 sein. Ein großes F deutet auf Unterschiede zwischen Gruppen hin.
 f = mq_faktor / mq_fehler
 print(f"f-Wert: {f:.4f}")
 
-#TODO: warum funktioniert hier sf und nicht cdf? - zu viele Nachkommastellen für double
-#p-Wert = 1 - stats.f.cdf(f, dof_faktor, dof_fehler
+# ANTWORT auf TODO: Warum sf statt cdf?
 p = stats.f.sf(f, dof_faktor, dof_fehler)
 print(f"p-Wert: {p:.4e}")
 
-#η²
+# Effektgröße η² (Eta-Quadrat): Anteil der Gesamtvarianz, der durch den Faktor erklärt wird
 eta2 = qs_faktor / (qs_faktor + qs_fehler)
 print(f"η²: {eta2:.4f}")
 
-#Kontrolle
+# Kontrolle: scipy.stats.f_oneway berechnet ANOVA automatisch — dient als Plausibilitätscheck
 anova = stats.f_oneway(*staemme_24)
 anova_p = anova.pvalue
 anova_f = anova.statistic
 print(f"ANOVA: f = {anova_f:.4f}, p = {anova_p:.4e}")
 
+# Interpretation: Bei α = 0.01 und p < 0.01 wird H0 abgelehnt → es gibt signifikante
+# Unterschiede zwischen mindestens zwei Stämmen. Dann ist ein Post-hoc-Test nötig.
 
-### Tukey-HSD
+### Tukey-HSD (Honestly Significant Difference) — Post-hoc-Test
+# Wenn die ANOVA signifikant ist, zeigt der Tukey-HSD-Test, welche Paarvergleiche
+# signifikant sind. Er korrigiert für multiples Testen (Family-Wise Error Rate).
+# Gruppen mit derselben Buchstaben-Partition unterscheiden sich nicht signifikant.
 tukey = smm.pairwise_tukeyhsd(endog=df_24.loc[:, 'Ausbeute'], groups=df_24['Stamm'], alpha=0.01)
 print(tukey)
 
-
-# 2.iv (optional)
-# Führen Sie nun eine zweifaktorielle Varianzanalyse durch und beantworten auf einem Konfidenzniveau
 # von α = 0.05, ob die Einflußfaktoren Expressionsstamm und Expressionsdauer alleine oder in Kombination
 # signifikant die Ausbeute beeinflussen! Falls ja, führen Sie eine Analyse der einzelnen Faktorstufen durch!
-
-
-
