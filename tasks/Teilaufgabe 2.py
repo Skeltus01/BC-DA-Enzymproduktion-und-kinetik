@@ -53,11 +53,11 @@ for name, values in stamm.items():
     s = values.std(ddof=1)
     ax.errorbar(m.index, m.values, yerr=s.values, marker='o', capsize=3, label=name)
 ax.set_xlabel('Expressionsdauer (h)')
-ax.set_ylabel('Ausbeute (mg/L)')
+ax.set_ylabel('mittlere Ausbeute (mg/L)')
 ax.set_xticks([6, 12, 18, 24, 48])
 ax.set_ylim(0, 7)
 ax.legend(title='Expressionsstamm', frameon=True, fontsize='small', title_fontsize='small')
-#fig.savefig('plots/a2_verlauf.svg', bbox_inches='tight')
+fig.savefig('plots/a2_verlauf.svg', bbox_inches='tight')
 plt.show()
 
 # Boxplot: Verteilung der Ausbeute pro Stamm für jeden Zeitpunkt
@@ -118,11 +118,11 @@ for name in namen:
     k = ki_df.loc[name]
     ax.errorbar(k.index, k['Mittelwert'], yerr=[k['Mittelwert'] - k['g0'], k['g1'] - k['Mittelwert']], marker='o', capsize=3, label=name)
 ax.set_xlabel('Expressionsdauer (h)')
-ax.set_ylabel('Ausbeute (mg/L), Mittel ± 95%-KI')
+ax.set_ylabel('mittlere Ausbeute ± 95%-KI (mg/L)')
 ax.set_xticks(zeiten)
 ax.set_ylim(0, 7)
 ax.legend(title='Expressionsstamm', frameon=True, fontsize='small', title_fontsize='small')
-#fig.savefig('plots/a2_verlauf_KI.svg', bbox_inches='tight')
+fig.savefig('plots/a2_verlauf_KI.svg', bbox_inches='tight')
 plt.show()
 
 # 2.iii
@@ -201,7 +201,7 @@ print(f"QS Fehler: {qs_fehler:.4f}")
 # k = Anzahl der Gruppen (Stämme), N = Gesamtstichprobengröße
 k, N = len(namen), sum(len(s) for s in staemme_24)
 dof_faktor = k - 1      # Freiheitsgrade zwischen Gruppen
-dof_fehler = N - k       # Freiheitsgrade innerhalb Gruppen
+dof_fehler = N - k      # Freiheitsgrade innerhalb Gruppen
 print(f"Freiheitsgrade Faktor: {dof_faktor}, Freiheitsgrade Fehler: {dof_fehler}")
 
 # Berechnung der mittleren Quadratsummen

@@ -121,7 +121,7 @@ ax.set_ylabel('[P] (nM)')
 ax.set_title('Produktbildung, 3 von 13 Substratkonzentrationen', loc='left')
 ax.spines[['top', 'right']].set_visible(False)
 fig.tight_layout()
-fig.savefig('plots/a5_progress_beispiele.png')
+fig.savefig('plots/a5_progress_beispiele.svg')
 plt.close(fig)
 
 
