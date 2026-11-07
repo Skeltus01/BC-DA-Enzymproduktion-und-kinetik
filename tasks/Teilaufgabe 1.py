@@ -55,7 +55,7 @@ for i, x in enumerate([lb_values, tb_values], start=1):
 ax.set_ylabel('Ausbeute (mg pro L Kultur)')
 ax.set_title('Enzymausbeute nach 24 h')
 ax.set_ylim(bottom=0, auto=True)
-#fig.savefig('plots/a1_boxplot.svg') # nur zur Neugenerierung der Boxplots auskommentieren
+fig.savefig('plots/a1_boxplot.svg') # nur zur Neugenerierung der Boxplots auskommentieren
 plt.show()
 
 # HISTOGRAMM
@@ -63,8 +63,6 @@ plt.show()
 Das Histogramm zeigt die Häufigkeitsverteilung der Ausbeuten.
 Die Anzahl der Klassen (Bins) wird nach der Regel von Sturges bestimmt:
   k = round(1 + 3.32 · log10(N))
-Diese Regel ist ein Faustwert; bei kleineren Stichproben kann sie zu viele Klassen liefern.
-Alternativ: Freedman-Diaconis-Regel (robuster gegenüber Ausreißern) oder SQRT-Histogram.
 """
 fig, axes = plt.subplots(1, 2, figsize=(8, 3), sharex=True)
 for ax, (name, x) in zip(axes, [('LB', lb_values), ('TB', tb_values)]):
@@ -76,7 +74,7 @@ for ax, (name, x) in zip(axes, [('LB', lb_values), ('TB', tb_values)]):
     ax.set_xlim(left=0, auto=True)
 axes[0].set_ylabel('absolute Häufigkeit')
 fig.tight_layout()
-#fig.savefig('plots/a1_histogramme.svg')  # nur zur Neugenerierung der Histogramme auskommentieren
+fig.savefig('plots/a1_histogramme.svg')  # nur zur Neugenerierung der Histogramme auskommentieren
 plt.show()
 
 
@@ -141,7 +139,7 @@ def konfidenzintervalle(values:pd.Series):
     sem = s / np.sqrt(N)        # Standardfehler des Mittelwertes (s_x̄ = s / √N)
 
     # t-Quantil für das zweiseitige Konfidenzintervall
-    # ppf = percent point function (Inverse der kumulierten Verteilungsfunktion)
+    # ppf = percent point function
     q = stats.t.ppf(1 - alpha / 2, df=dof)
 
     # Untere (g0) und obere (g1) Grenze des Konfidenzintervalls
@@ -180,19 +178,10 @@ def shapiro_wilk(values:pd.Series):
     """
     Shapiro-Wilk-Test auf Normalverteilung.
 
-    #todo: Population richtig?
     H_0: Die Daten stammen aus einer normalverteilten Population.
     H_1: Die Daten stammen NICHT aus einer normalverteilten Population.
-    
-    Der Shapiro-Wilk-Test ist einer der mächtigsten Normalverteilungstests,
-    besonders bei kleinen bis mittleren Stichproben (N < 5000).
-    
-    Werte des W-Statistik nahe 1 deuten auf Normalverteilung hin.
+
     Ein kleiner p-Wert (< α) bedeutet: H_0 ablehnen → Normalverteilung nicht gegeben.
-    
-    ACHTUNG: Bei sehr großen Stichproben kann auch eine kleine Abweichung
-    signifikant werden → Normalverteilungsannahme ist dann oft trotzdem vertretbar.
-    Daher immer auch grafisch (Q-Q-Plot) prüfen!
     """
     shapiro = stats.shapiro(values)
     print(f"Shapiro-Wilk ({str(values.name)}): W = {shapiro.statistic:.4f}, p = {shapiro.pvalue:.4f}")
@@ -219,7 +208,6 @@ def t_test(values:pd.Series):
     Voraussetzungen:
     - Unabhängige Stichproben (jeder Messwert stammt von einer eigenen Kultur)
     - Normalverteilung der Grundgesamtheit (geprüft mit Shapiro-Wilk + Q-Q-Plot)
-    - Intervallskalierung der Daten (gegeben: mg/L)
     """
     # scipy-Version des Tests (zur Kontrolle)
     t_test = stats.ttest_1samp(values, µ_0, alternative='greater')
@@ -259,18 +247,20 @@ shapiro_wilk(tb_values)
 t_test(tb_values)
 
 
-# Q-Q-Plot (Quantile-Quantile-Plot) → Graphische Überprüfung der Normalverteilung
-# Im Q-Q-Plot werden die quantilen der Daten gegen die quantilen einer theoretischen
-# Normalverteilung aufgetragen. Liegen die Punkte annähernd auf der Diagonalen,
-# ist die Normalverteilungsannahme plausibel.
-# Systematische Abweichungen (z. B. S-förmige Kurve) deuten auf Schiefe oder
-# schwerere/leichtere Verteilungsschwerter hin.
+"""
+Q-Q-Plot (Quantile-Quantile-Plot) → Graphische Überprüfung der Normalverteilung
+Im Q-Q-Plot werden die quantilen der Daten gegen die quantilen einer theoretischen
+Normalverteilung aufgetragen. Liegen die Punkte annähernd auf der Diagonalen,
+ist die Normalverteilungsannahme plausibel.
+Systematische Abweichungen (z. B. S-förmige Kurve) deuten auf Schiefe oder
+schwerere/leichtere Verteilungsschwerter hin.
+"""
 fig, axes = plt.subplots(1, 2, figsize=(8, 3.5))
 for ax, (name, x) in zip(axes, [('LB', lb_values), ('TB', tb_values)]):
     stats.probplot(x, plot=ax)
     ax.set_title(f'Q-Q-Plot {name}')
 fig.tight_layout()
-#fig.savefig('plots/a1_qqplots.svg')  # nur zur Neugenerierung der Q-Q-Plots auskommentieren
+fig.savefig('plots/a1_qqplots.svg')  # nur zur Neugenerierung der Q-Q-Plots auskommentieren
 plt.show()
 
 # endregion ############################################################################################################
@@ -282,7 +272,8 @@ plt.show()
 
 alpha = 0.01
 confidence = 1-alpha
-#Gibt es einen signifikanten Unterschied zwischen LB und TB? Man will sich sehr (höheres Konfidenzniveau) sicher sein, bevor man sich auf ein Medium festlegt
+#Gibt es einen signifikanten Unterschied zwischen LB und TB? Man will sich sehr (höheres Konfidenzniveau) sicher sein,
+# bevor man sich auf ein Medium festlegt
 #Man lässt höchstens 1% Risiko für einen falsch positiven Befund zu (Fehler 1. Art)
 
 #H_1: µ_LB != µ_TB

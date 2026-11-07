@@ -70,7 +70,7 @@ for ax, z in zip(axes, zeiten):
     ax.set_title(f'{z} h'); ax.tick_params(axis='x', rotation=60)
 axes[0].set_ylabel('Ausbeute (mg/L)')
 fig.tight_layout()
-#fig.savefig('plots/a2_boxplots.svg')
+fig.savefig('plots/a2_boxplots.svg')
 plt.show()
 
 # Mittelwerte & Varianzen für alle Kombinationen von Stamm und Zeitpunkt
@@ -156,8 +156,6 @@ for name, value in zip(namen, staemme_24):
     shapiro = stats.shapiro(value)
     print(f"Shapiro-Wilk Test for {name}: W = {shapiro.statistic:.4f}, p = {shapiro.pvalue:.4f}")
     print()
-
-# TODO: Q-Q-Plot sinnvoll?
 
 # Residuen = Messwert - Gruppenmittelwert
 # Die Residuen sollten normalverteilt sein, wenn die ANOVA-Voraussetzung erfüllt ist.

@@ -37,9 +37,7 @@ jacky = person_df[person_df['Person'] == 'Jacky']['Ausbeute']
 # Stellen Sie die Daten wiederum in geeigneter Weise grafisch dar und bestimmen die gängigen statistischen
 # Kenngrößen Mittelwert und Varianz für alle Personen!
 
-# Boxplot: Visualisiert Median, Quartile und Ausreißer pro Person
-# Die gestreuten Punkte (Jitter-Plot) zeigen die einzelnen Messwerte
-# und machen die Stichprobengröße sichtbar.
+# BOXPLOT
 personen = ['Jim', 'Jane', 'PI', 'Jacky']
 daten = [person_df[person_df["Person"] == p]['Ausbeute'].values for p in personen]
 fig, ax = plt.subplots(figsize=(5, 4))
@@ -49,7 +47,7 @@ for i, x in enumerate(daten, start=1):
     ax.scatter(np.random.normal(i, 0.05, len(x)), x, s=15, alpha=0.6)
 ax.set_ylabel('Ausbeute (mg/L)')
 ax.set_title('BL21, TB, 24 h')
-#plt.savefig('plots/a3_boxplot.svg', bbox_inches='tight')
+plt.savefig('plots/a3_boxplot.svg', bbox_inches='tight')
 plt.close()
 
 # Berechnung der deskriptiven Kenngrößen: Mittelwert und Varianz pro Person
@@ -101,25 +99,13 @@ for p, x in zip(personen, daten):
 # 2. Varianzhomogenitätstest (Levene)
 #    H0: Die Varianzen sind gleich (homogen).
 #    p > 0.05 → H0 wird NICHT verworfen → Varianzen sind homogen.
-#    scipy.stats.levene() verwendet standardmäßig den Median (robuster).
-#    In der VL wurde center='mean' verwendet — hier beide zum Vergleich.
 print('\n=== Levene Varianzhomogenitätstest ===')
 lev_mean = stats.levene(*daten, center='mean')
-lev_median = stats.levene(*daten, center='median')
 print(f'Levene p-Wert (mean)   : {lev_mean.pvalue:.4f}  -> {"Varianzen homogen" if lev_mean.pvalue > 0.05 else "Varianzen HETEROGEN"}')
-print(f'Levene p-Wert (median) : {lev_median.pvalue:.4f}  -> {"Varianzen homogen" if lev_median.pvalue > 0.05 else "Varianzen HETEROGEN"}')
 
 
-# ANOVA — F-Test (klassisch für Modell I, aber F-Test-Statistik
-# ist bei Modell II identisch; nur die INTERPRETATION unterscheidet sich)
-# WICHTIG: Der F-Test (scipy.stats.f_oneway) berechnet dieselbe
-# Teststatistik wie die ANOVA-Tabelle. Bei Modell II (random effects)
-# ist die F-STATISTIK formal gleich, aber die Hypothesen und
-# Interpretation sind anders (s. oben).
-# ACHTUNG: Bei HETEROGENEN Varianzen (Levene p < 0.05) ist der
-# klassische F-Test problematisch! In diesem Fall sollte man
-# robuste Alternativen (Welch-ANOVA) oder Mixed-Effects-Modelle nutzen.
-print('\n=== ANOVA F-Test ===') #todo: wirklich F oder eher f?
+# ANOVA — F-Test
+print('\n=== ANOVA F-Test ===')
 anova = stats.f_oneway(*daten)
 print(f'ANOVA F-Wert: {anova.statistic:.4f}, p-Wert: {anova.pvalue:.6f}')
 if anova.pvalue < 0.05:
@@ -135,7 +121,6 @@ print(f'Freiheitsgrade: df_zwischen = {k - 1}, df_innerhalb = {k * (n - 1)}')
 
 # MIXED-EFFECTS-MODELL (Random-Effects-Modell für Modell II)
 
-# Das MixedLM-Modell ist die korrekte Methode für Modell II (random effects).
 # Es schätzt direkt die Varianzkomponenten:
 #   - Group Var (σ²_A): Varianz zwischen den Personen (Personeneffekt)
 #   - Scale (σ²_E): Residuale Varianz (innerhalb der Personen)

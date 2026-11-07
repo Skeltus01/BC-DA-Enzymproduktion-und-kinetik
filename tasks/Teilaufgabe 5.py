@@ -26,15 +26,6 @@ konz = [2, 4, 8, 16, 24, 32, 39, 47, 56, 66, 77, 90, 110]
 
 
 def get(c, rep):
-    """Liest die Messdaten für eine gegebene Substratkonzentration c (µM) und
-    ein Replikat rep (1, 2 oder 3) aus der CSV-Datei aus.
-
-    Die CSV-Struktur:
-      - Spalten: pro Konzentration 3 Spalten (Zeit, Produkt, ggf. leer).
-        Die Zeit-Spalte ist bei 3·i, die Produkt-Spalte bei 3·i+1.
-      - Zeilen: Replikat 1 beginnt bei Zeile 5, Replikat 2 bei Zeile 15,
-        Replikat 3 bei Zeile 25. Jedes Replikat hat 6 Zeilen Messwerte.
-    """
     i = konz.index(c)                     # Spalten-Index der Konzentration
     z = 5 + 10 * (rep - 1)               # Startzeile des Replikats
     out = df.iloc[z:z + 6, 3 * i:3 * i + 2].apply(
@@ -90,18 +81,15 @@ for S in konz:
             'R2': fit.rvalue**2              # Bestimmtheitskoeffizient (Qualität des linearen Fits)
         })
 
-# DataFrame mit allen 39 Ergebnissen (13 Konzentrationen × 3 Replikate)
 v = pd.DataFrame(ergebnisse)
 print(v.round(3))
 
-#Produktverläufe für 3 Beispielkonzentrationen,
-# alle Replikate mit ihren Fitgeraden P(t) = P0 + v0·t
-G3, G, G2 = '#00573A', '#009260', '#7CC4A4'      # Grüntöne der Folienvorlage
+G3, G, G2 = 'blue', 'orange', 'lime'
 
 fig, ax = plt.subplots(figsize=(6.3, 4.55), dpi=220)
 for S, farbe in [(110, G3), (32, G), (4, G2)]:
     steigungen = []
-    for rep, marker in zip([1, 2, 3], ['o', 's', '^']):   # Symbol = Replikat
+    for rep, marker in zip([1, 2, 3], ['o', 's', '^']):
         d = get(S, rep)
         t = d["Time (min)"]
         P = d["Product (nM)"]
@@ -122,6 +110,7 @@ ax.set_title('Produktbildung, 3 von 13 Substratkonzentrationen', loc='left')
 ax.spines[['top', 'right']].set_visible(False)
 fig.tight_layout()
 fig.savefig('plots/a5_progress_beispiele.svg')
+plt.show()
 plt.close(fig)
 
 
@@ -130,22 +119,6 @@ plt.close(fig)
 # auf! Werten Sie die Daten gemäß der Michaelis-Menten Kinetik aus und bestimmen somit die besten Werte
 # für v_max und KM sowie die zugehörigen Standardfehler! Bewerten Sie die Güte der Kurvenanpassung!
 
-
-#   Die Michaelis-Menten-Gleichung ist ein nicht-lineares Modell:
-#       v0 = v_max · [S] / (KM + [S])
-#
-#   Mit scipy.optimize.curve_fit() wird eine nicht-lineare Least-Squares-
-#   Anpassung durchgeführt. Die Startwerte p0 sind wichtig, da der Algorithmus
-#   iterativ arbeitet und von guten Startwerten abhängt.
-#
-#   v_max-Startwert: Der maximale gemessene v0-Wert (kann v_max nicht überschreiten)
-#   KM-Startwert: 30 µM (grobe Schätzung aus dem Diagramm)
-#
-#   Die bessere Vorgehensweise:
-#   - Mittelwerte pro Konzentration bilden (13 Punkte)
-#   - Mit sigma = Standardfehler des Mittels gewichten
-#   - So erhält man korrekte Standardfehler für v_max und KM
-# =============================================================================
 
 def mm(S, v_max, KM):
     """Michaelis-Menten-Gleichung: v0 = v_max · S / (KM + S)"""
@@ -238,7 +211,7 @@ fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 9), sharex=True, gridspec_kw={'
 # Datenpunkte mit Fehlerbalken (Standardfehler des Mittels)
 ax1.errorbar(
     v_mean['S'], v_mean['v0'],
-    yerr=v_mean['se_v0'], #todo: das ist der Fitfehler -> Fehlerfortpflanzung
+    yerr=v_mean['se_v0'],
     fmt='o', ms=4, capsize=3,
     label=r'$\overline{v_0}$ (± SEM)'
 )
@@ -287,22 +260,10 @@ plt.close()
 # Transformieren Sie die Daten nun in die doppelt-reziproke Form nach Lineweaver-Burk!
 # Tragen Sie die Daten auf und führen einen Fit von 1 / v0 gegen 1 / [S] auf.
 # Unterscheiden sich die erhaltenen Werte für die Parameter v_max und KM von den zuvor bestimmten?
-#
-#   Die Lineweaver-Burk-Gleichung ist die doppelt-reziproke Form der
-#   Michaelis-Menten-Gleichung:
-#
-#       1/v0 = (KM / v_max) · (1/[S]) + 1/v_max
-#
-#   Dies entspricht einer Geradengleichung y = a·x + b mit:
-#       Steigung a = KM / v_max
-#       Achsenabschnitt b = 1 / v_max
-#
-#   Daraus folgt:
-#       v_max = 1 / b
-#       KM   = a / b
+
 
 # Reziproke Transformation der MITTELWERTE
-x = 1 / v_mean['S']       # 1/[S] in 1/µM #todo: warum hier Mittelwerte und nicht Einzelwerte
+x = 1 / v_mean['S']       # 1/[S] in 1/µM
 y = 1 / v_mean['v0']      # 1/v0 in min/nM
 
 # Lineare Regression auf die transformierten Daten
@@ -327,7 +288,7 @@ print(f'  K_M:   {KM:.1f} vs {KM_lb:.1f} μM (Abweichung: {abs(KM - KM_lb)/KM*10
 
 # Die Standardfehler der transformierten Werte:
 # σ(1/v0) = σ(v0) / v0²  (Fehlerfortpflanzung für reziproke Funktion)
-sy = v_mean['se_v0'] / v_mean['v0']**2 #todo: was bedeutet sy?
+sy = v_mean['se_v0'] / v_mean['v0']**2
 
 
 # === Plot: Lineweaver-Burk-Diagramm ===
