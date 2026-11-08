@@ -8,6 +8,7 @@
 # durchgeführt.
 
 import matplotlib.pyplot as plt
+import matplotlib.transforms as mtransforms
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
@@ -109,8 +110,8 @@ ax.set_ylabel('[P] (nM)')
 ax.set_title('Produktbildung, 3 von 13 Substratkonzentrationen', loc='left')
 ax.spines[['top', 'right']].set_visible(False)
 fig.tight_layout()
-fig.savefig('plots/a5_progress_beispiele.svg')
-plt.show()
+#fig.savefig('plots/a5_progress_beispiele.svg')
+#plt.show()
 plt.close(fig)
 
 
@@ -149,7 +150,7 @@ print(f'v_max = {v_max:.2f} ± {se[0]:.2f} nM/min, K_M = {KM:.1f} ± {se[1]:.1f}
 
 
 # 95%-Konfidenzintervalle
-N_pkt = len(v_mean)
+N_pkt = len(v)
 nu = N_pkt - len(param)             # Freiheitsgrade
 t_q = stats.t.ppf(0.975, df=nu)  # t-Quantil für 95% Konfidenz
 print('95%-KI v_max:', v_max - t_q * se[0], v_max + t_q * se[0])
@@ -167,9 +168,6 @@ print('Korrelation ρ² (v_max/K_M):', covar[0, 1] / (se[0] * se[1]))
 # Daher wird χ² ungewichtet berechnet — aber auf ALLEN 39 Einzelwerten,
 # um eine zuverlässige Schätzung der Restvarianz zu erhalten.
 
-# Residuen der Mittelwerte (für Residuenplot)
-v_mean['res'] = v_mean['v0'] - mm(v_mean['S'], *param)
-
 # Residuen aller 39 Einzelwerte (für χ²-Berechnung)
 v['v_fit'] = mm(v['S'], *param)
 v['res'] = v['v0'] - v['v_fit']
@@ -185,9 +183,9 @@ print(f'(berechnet aus {N_einzel} Einzelwerten, ν = {nu_einzel})')
 
 
 # Chi-Quadrat aus allen Mittelwerten
-N_mittel = len(v_mean)                     # 39 Einzelwerte
+N_mittel = len(v)                     # 39 Einzelwerte
 nu_mittel = N_mittel - len(param)     # Freiheitsgrade: 39 - 2 = 37
-chi2 = (v_mean['res']**2).sum()            # Summe der quadrierten Residuen (ungewichtet)
+chi2 = (v['res']**2).sum()            # Summe der quadrierten Residuen (ungewichtet)
 chi2_red = chi2 / nu_mittel           # Reduziertes Chi-Quadrat = Schätzung der Restvarianz
 print(f'χ² = {chi2:.3f}')
 print(f'red. χ² = {chi2_red:.3f}')
@@ -198,23 +196,22 @@ print(f'(berechnet aus {N_mittel} Mittelwerten, ν = {nu_mittel})')
 
 
 
-
-
-# Shapiro-Wilk-Test auf Normalverteilung der Residuen (Mittelwerte, für Plot)
+# Shapiro-Wilk-Test auf Normalverteilung der Residuen
 # p > 0.05 → Residuen sind normalverteilt (Annahme der Regression erfüllt)
-print('Shapiro Residuen (Mittelwerte):', stats.shapiro(v_mean['res']))
+print('Shapiro Residuen (Mittelwerte):', stats.shapiro(v['res']))
 
 # === Plot: Michaelis-Menten-Kurve mit Fit ===
-S_plot = np.linspace(0, v_mean['S'].max(), 300)
+S_plot = np.linspace(0, v['S'].max(), 300)
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 9), sharex=True, gridspec_kw={'height_ratios': [3, 1]})
 
 # Datenpunkte mit Fehlerbalken (Standardfehler des Mittels)
-ax1.errorbar(
-    v_mean['S'], v_mean['v0'],
-    yerr=v_mean['se_v0'],
-    fmt='o', ms=4, capsize=3,
-    label=r'$\overline{v_0}$ (± SEM)'
-)
+#ax1.errorbar(
+#    v['S'], v['v0'],
+#    yerr=v['se_v0'], #todo: passt hier der Fitfehler?
+#    fmt='o', ms=4, capsize=3,
+#    label=r'$\overline{v_0}$ (± SEM)'
+#)
+ax1.scatter(v['S'], v['v0'], label=r'$v_0$')
 
 # Angepasste Michaelis-Menten-Kurve
 ax1.plot(S_plot, mm(S_plot, *param), 'r-', label='Michaelis-Menten-Fit')
@@ -242,18 +239,18 @@ ax1_b.set_xticklabels([rf'$K_M$ = {KM:.1f} μM'])
 #ax_b.set_xlabel('[S] (μM)')
 
 ax1.set_ylim(0, v_max + 1)
-ax1.set_xlim(0, v_mean['S'].max() + 1)
+ax1.set_xlim(0, v['S'].max() + 1)
 ax1.set_ylabel('v₀ (nM/min)')
 ax1.legend()
 ax1.set_title('Michaelis-Menten-Fit')
 
-ax2.scatter(v_mean['S'], v_mean['res'], s=15)
+ax2.scatter(v['S'], v['res'], s=15)
 ax2.axhline(0, color='grey')
 ax2.set_xlabel('[S] (μM)')
 ax2.set_ylabel('Residuen')
 
 fig.tight_layout()
-#fig.savefig('plots/a5_michaelis_menten.svg')
+fig.savefig('plots/a5_michaelis_menten.svg')
 plt.close()
 
 # 5.iii
@@ -263,8 +260,8 @@ plt.close()
 
 
 # Reziproke Transformation der MITTELWERTE
-x = 1 / v_mean['S']       # 1/[S] in 1/µM
-y = 1 / v_mean['v0']      # 1/v0 in min/nM
+x = 1 / v['S']       # 1/[S] in 1/µM
+y = 1 / v['v0']      # 1/v0 in min/nM
 
 # Lineare Regression auf die transformierten Daten
 lb = stats.linregress(x, y)
@@ -283,40 +280,62 @@ print(f'\nVergleich mit nicht-linearem Fit (5.ii):')
 print(f'  v_max: {v_max:.2f} vs {v_max_lb:.2f} nM/min (Abweichung: {abs(v_max - v_max_lb)/v_max*100:.1f}%)')
 print(f'  K_M:   {KM:.1f} vs {KM_lb:.1f} μM (Abweichung: {abs(KM - KM_lb)/KM*100:.1f}%)')
 
-
 # === Fehlerfortpflanzung für Lineweaver-Burk-Parameter ===
 
 # Die Standardfehler der transformierten Werte:
 # σ(1/v0) = σ(v0) / v0²  (Fehlerfortpflanzung für reziproke Funktion)
-sy = v_mean['se_v0'] / v_mean['v0']**2
+sy = v['se_v0'] / v['v0']**2
 
 
 # === Plot: Lineweaver-Burk-Diagramm ===
 fig, ax = plt.subplots(figsize=(9, 6))
 
 # Lineare Regression als rote Linie
-xf = np.linspace(0, x.max(), 100)
+#xf = np.linspace(0, x.max(), 100)
+xf = np.linspace(-(1/KM_lb), x.max(), 100)
 ax.plot(xf, lb.intercept + lb.slope * xf, 'r-', label='Lineare Regression')
 
 # Datenpunkte mit Fehlerbalken
 ax.errorbar(
     x, y, yerr=sy,
     fmt='o', ms=3, capsize=2,
-    label=r'$1/\overline{v_0}$ (± SEM)'
+    label=r'$1/v_0$ (± $σ_{1/v_0}$)'
 )
 
 # Achsenbeschriftungen und Titel
 ax.set_xlabel('1/[S] (1/μM)')
 ax.set_ylabel('1/v₀ (min/nM)')
 
+
 # Achsen so wählen, dass der Achsenabschnitt sichtbar ist
 ax.set_ylim(0, 1.1 * ax.get_ylim()[1])
 ax.set_xlim(-(1 / KM_lb), ax.get_xlim()[1])
 
+# Achsenbeschriftungen K_M und v_max
+ax.scatter(0, 1/v_max_lb, label=r'$1/v_{max}$', color='red')
+ax_x = ax.secondary_xaxis('bottom')
+ax_x.set_xticks([-(1/KM_lb)])
+ax_x.set_xticklabels([r"$-\frac{1}{K_M}$"])
+
+ax_y = ax.secondary_yaxis('left')
+ax_y.set_yticks([1/v_max_lb])
+tick_labels = ax_y.set_yticklabels([r"$\frac{1}{v_{max}}$"])
+# Offset der Beschriftung
+dy = 8
+offset = mtransforms.ScaledTranslation(0, dy/72, fig.dpi_scale_trans)
+for label in ax_y.get_yticklabels():
+    label.set_transform(label.get_transform() + offset)
+
+
+# Achsen und Rahmen anpassen
+ax.axvline(0, color='grey', linestyle='--')
+#ax.vlines(-1/KM_lb, 0, 1/v_max_lb, color='grey', linestyle='--')
+ax.hlines(1/v_max_lb, -1/KM_lb, 0, color='grey', linestyle='--')
+
 ax.legend()
 ax.set_title('Lineweaver-Burk-Plot')
 fig.tight_layout()
-#fig.savefig('plots/a5_lineweaver_burk.svg')
+fig.savefig('plots/a5_lineweaver_burk.svg')
 plt.close()
 
 
