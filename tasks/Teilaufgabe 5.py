@@ -136,10 +136,9 @@ v_mean['se_v0'] = v_mean['std'] / np.sqrt(v_mean['n'])  # Standardfehler des Mit
 # Startwerte für die nicht-lineare Optimierung
 p0 = [v['v0'].max(), 30.0]
 
-# Nicht-linearer Fit auf Mittelwerte mit Gewichtung durch Standardfehler
-# sigma=v_mean['se_v0'] gewichtet jeden Punkt nach seiner Unsicherheit
+# Nicht-linearer Fit der Einzelwerte
 param, covar = optimize.curve_fit(
-    mm, v_mean['S'], v_mean['v0'],
+    mm, v['S'], v['v0'],
     p0=p0,
 # hier ggf. Gewichtung nicht sinnvoll, da nur wenige Punkte vorhanden sind. Hier trotzdem die Formel
     # sigma=v_mean['se_v0'], absolute_sigma=True
@@ -168,13 +167,17 @@ print('Korrelation ρ² (v_max/K_M):', covar[0, 1] / (se[0] * se[1]))
 # Daher wird χ² ungewichtet berechnet — aber auf ALLEN 39 Einzelwerten,
 # um eine zuverlässige Schätzung der Restvarianz zu erhalten.
 
-# Residuen aller 39 Einzelwerte (für χ²-Berechnung)
+# Residuen aller 39 Einzelwerte und 13 Mittelwerte (für χ²-Berechnung)
 v['v_fit'] = mm(v['S'], *param)
 v['res'] = v['v0'] - v['v_fit']
 
+v_mean['v_fit'] = mm(v_mean['S'], *param)
+v_mean['res'] = v_mean['v0'] - v_mean['v_fit']
+
+
 # Chi-Quadrat aus allen Einzelwerten
 N_einzel = len(v)                     # 39 Einzelwerte
-nu_einzel = N_einzel - len(param)     # Freiheitsgrade: 39 - 2 = 37
+nu_einzel = N_einzel - len(param)     # Freiheitsgrade: 37
 chi2 = (v['res']**2).sum()            # Summe der quadrierten Residuen (ungewichtet)
 chi2_red = chi2 / nu_einzel           # Reduziertes Chi-Quadrat = Schätzung der Restvarianz
 print(f'χ² = {chi2:.3f}')
@@ -183,9 +186,9 @@ print(f'(berechnet aus {N_einzel} Einzelwerten, ν = {nu_einzel})')
 
 
 # Chi-Quadrat aus allen Mittelwerten
-N_mittel = len(v)                     # 39 Einzelwerte
-nu_mittel = N_mittel - len(param)     # Freiheitsgrade: 39 - 2 = 37
-chi2 = (v['res']**2).sum()            # Summe der quadrierten Residuen (ungewichtet)
+N_mittel = len(v_mean)                     # 13 Mittelwerte
+nu_mittel = N_mittel - len(param)     # Freiheitsgrade
+chi2 = (v_mean['res']**2).sum()            # Summe der quadrierten Residuen (ungewichtet)
 chi2_red = chi2 / nu_mittel           # Reduziertes Chi-Quadrat = Schätzung der Restvarianz
 print(f'χ² = {chi2:.3f}')
 print(f'red. χ² = {chi2_red:.3f}')
@@ -197,7 +200,7 @@ print(f'(berechnet aus {N_mittel} Mittelwerten, ν = {nu_mittel})')
 
 
 # Shapiro-Wilk-Test auf Normalverteilung der Residuen
-# p > 0.05 → Residuen sind normalverteilt (Annahme der Regression erfüllt)
+# p > 0.05 → kein Hinweis gegen
 print('Shapiro Residuen (Mittelwerte):', stats.shapiro(v['res']))
 
 # === Plot: Michaelis-Menten-Kurve mit Fit ===
@@ -207,7 +210,7 @@ fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 9), sharex=True, gridspec_kw={'
 # Datenpunkte mit Fehlerbalken (Standardfehler des Mittels)
 #ax1.errorbar(
 #    v['S'], v['v0'],
-#    yerr=v['se_v0'], #todo: passt hier der Fitfehler?
+#    yerr=v['se_v0'],
 #    fmt='o', ms=4, capsize=3,
 #    label=r'$\overline{v_0}$ (± SEM)'
 #)

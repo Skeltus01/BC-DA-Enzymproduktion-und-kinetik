@@ -141,5 +141,3 @@ print(mm.random_effects)
 # (Eine Lösung kann entweder auf Basis der vorhandenen Daten erfolgen [das ist anspruchsvoll und am besten mit Python adressierbar],
 # oder Sie schlagen ein neues Experiment vor, mit dem eine Beantwortung möglich wäre.)
 
-
-

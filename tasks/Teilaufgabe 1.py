@@ -87,8 +87,8 @@ def kennzahlen(values:pd.Series):
     - Varianz (stichprobenbezogen, ddof=1 → Division durch N-1)
     - Median (mittlerer Wert, robust gegenüber Ausreißern)
     - Quartile Q1 (25 %) und Q3 (75 %) — zwei Berechnungsmethoden:
-        a) lineare Interpolation (pandas.quantile, Standard)
-        b) Midpoint-Methode (np.percentile, entspricht dem, was matplotlibs boxplot intern nutzt)
+        a) lineare Interpolation
+        b) Midpoint-Methode
     """
     mean = values.mean()
     var = values.var(ddof=1)
@@ -206,7 +206,7 @@ def t_test(values:pd.Series):
     der mindestens so extrem (groß) ist wie der berechnete.
     
     Voraussetzungen:
-    - Unabhängige Stichproben (jeder Messwert stammt von einer eigenen Kultur)
+    - Unabhängige Stichproben (Wiederholungsmessungen)
     - Normalverteilung der Grundgesamtheit (geprüft mit Shapiro-Wilk + Q-Q-Plot)
     """
     # scipy-Version des Tests (zur Kontrolle)
@@ -253,7 +253,7 @@ Im Q-Q-Plot werden die quantilen der Daten gegen die quantilen einer theoretisch
 Normalverteilung aufgetragen. Liegen die Punkte annähernd auf der Diagonalen,
 ist die Normalverteilungsannahme plausibel.
 Systematische Abweichungen (z. B. S-förmige Kurve) deuten auf Schiefe oder
-schwerere/leichtere Verteilungsschwerter hin.
+schwerere/leichtere Verteilungsswerte hin.
 """
 fig, axes = plt.subplots(1, 2, figsize=(8, 3.5))
 for ax, (name, x) in zip(axes, [('LB', lb_values), ('TB', tb_values)]):

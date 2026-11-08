@@ -175,7 +175,7 @@ print(f"Levene: p = {levene.pvalue:.4f}")
 """
 Die ANOVA zerlegt die Gesamtvarianz in:
 - Varianz zwischen den Gruppen (Faktor) — wird durch den Einflussfaktor (Stamm) erklärt
-- Varianz innerhalb der Gruppen (Fehler) — unexplained, zufällige Streuung
+- Varianz innerhalb der Gruppen (Fehler) — zufällige Streuung
 
 Effektgröße eta² (η²): Anteil der Gesamtvarianz, der durch den Faktor erklärt wird.
 η² = QS_Faktor / (QS_Faktor + QS_Fehler) = QS_Faktor / QS_Gesamt
@@ -183,7 +183,6 @@ Effektgröße eta² (η²): Anteil der Gesamtvarianz, der durch den Faktor erkl�
 
 # Gesamtmittelwert — Mittelwert aller Messwerte bei 24 h
 mean_ges = staemme_df.loc[staemme_df['Zeit'] == 24, 'Ausbeute'].mean()
-print(mean_ges)
 
 # Quadratsumme Faktor (zwischen den Gruppen): Misst die Streuung der Gruppenmittelwerte um den Gesamtmittelwert
 # QS_Faktor = Σ n_i · (x̄_i - x̄_ges)²
@@ -213,8 +212,8 @@ print(f"MQ Faktor: {mq_faktor:.4f}, MQ Fehler: {mq_fehler:.4f}")
 f = mq_faktor / mq_fehler
 print(f"f-Wert: {f:.4f}")
 
-# ANTWORT auf TODO: Warum sf statt cdf?
-p = stats.f.sf(f, dof_faktor, dof_fehler)
+
+p = stats.f.sf(f, dof_faktor, dof_fehler) #hier sf statt cdf, da p-Wert sehr klein ist und cdf damit Probleme hat
 print(f"p-Wert: {p:.4e}")
 
 # Effektgröße η² (Eta-Quadrat): Anteil der Gesamtvarianz, der durch den Faktor erklärt wird
@@ -231,11 +230,14 @@ print(f"ANOVA: f = {anova_f:.4f}, p = {anova_p:.4e}")
 # Unterschiede zwischen mindestens zwei Stämmen. Dann ist ein Post-hoc-Test nötig.
 
 ### Tukey-HSD (Honestly Significant Difference) — Post-hoc-Test
-# Wenn die ANOVA signifikant ist, zeigt der Tukey-HSD-Test, welche Paarvergleiche
-# signifikant sind. Er korrigiert für multiples Testen (Family-Wise Error Rate).
-# Gruppen mit derselben Buchstaben-Partition unterscheiden sich nicht signifikant.
+# Wenn die ANOVA signifikant ist, zeigt der Tukey-HSD-Test, welche Paarvergleiche signifikant sind.
 tukey = smm.pairwise_tukeyhsd(endog=df_24.loc[:, 'Ausbeute'], groups=df_24['Stamm'], alpha=0.01)
 print(tukey)
-# BL21 am besten
-# LOBSTR am schlechtesten
-# Gold/Rosetta/C41 etwa gleich auf
+
+print()
+print('BL21 Gold, BL21 Rosetta und C41 weichen nicht signifikant voneinander ab')
+print()
+print('Zusammenfassend zeigt sich eine absteigende Tendenz der Ausbeute:')
+print('BL21 (höchste) > BL21 Gold ≈ BL21 Rosetta ≈ C41 > LOBSTR (niedrigste).')
+# Gold/Rosetta/C41 nicht signifikant voneinander abweichend (p-adj)
+# BL21 > Gold/Rosetta/C41 > LOBSTR (meandiff)
