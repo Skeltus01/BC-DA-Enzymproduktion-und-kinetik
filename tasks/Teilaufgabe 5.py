@@ -76,7 +76,7 @@ for S in konz:
             'S': S,
             'rep': rep,
             'v0': fit.slope,                 # Anfangsgeschwindigkeit (nM/min)
-            'se_v0': fit.stderr,             # Standardfehler der Steigung
+            'se_v0': fit.stderr,             # Standardfehler der Steigung aus dem Fit EINES Replikats (6 Zeitpunkte), NICHT die Streuung zwischen den Replikaten
             'P0': fit.intercept,             # Achsenabschnitt (Produkt bei t=0)
             'se_P0': fit.intercept_stderr,   # Standardfehler des Achsenabschnitts
             'R2': fit.rvalue**2              # Bestimmtheitskoeffizient (Qualität des linearen Fits)
@@ -131,7 +131,7 @@ v_mean = (v.groupby('S')
                std=('v0', 'std'),
                n=('v0', 'count'))
           .reset_index())
-v_mean['se_v0'] = v_mean['std'] / np.sqrt(v_mean['n'])  # Standardfehler des Mittels
+v_mean['sem_v0'] = v_mean['std'] / np.sqrt(v_mean['n'])  # # SEM (standard error of the mean): Streuung ZWISCHEN den 3 Replikaten / √3
 
 # Startwerte für die nicht-lineare Optimierung
 p0 = [v['v0'].max(), 30.0]
@@ -139,10 +139,12 @@ p0 = [v['v0'].max(), 30.0]
 # Nicht-linearer Fit der Einzelwerte
 param, covar = optimize.curve_fit(
     mm, v['S'], v['v0'],
-    p0=p0,
-# hier ggf. Gewichtung nicht sinnvoll, da nur wenige Punkte vorhanden sind. Hier trotzdem die Formel
-    # sigma=v_mean['se_v0'], absolute_sigma=True
-)
+    p0=p0)
+# Ungewichteter Fit auf alle 39 Einzelwerte.
+    # Keine Gewichtung mit Replikat-SD/SEM: aus n = 3 Werten pro Konzentration ist die
+    # Streuungsschätzung zu instabil (z. B. SD = 1,43 bei 24 µM, 0,36 bei 32 µM).
+    # Für eine Gewichtung bräuchte sigma 39 Einträge (einen pro Datenpunkt), nicht 13.
+
 se = np.sqrt(np.diag(covar))    # Standardfehler der Parameter
 v_max, KM = param
 print(f'v_max = {v_max:.2f} ± {se[0]:.2f} nM/min, K_M = {KM:.1f} ± {se[1]:.1f} μM')
@@ -157,7 +159,7 @@ print('95%-KI K_M: ', KM - t_q * se[1], KM + t_q * se[1])
 
 # Korrelation zwischen v_max und KM – hohe Korrelation bedeutet, dass die
 # Parameter stark voneinander abhängen und unsicher bestimmt sind
-print('Korrelation ρ² (v_max/K_M):', covar[0, 1] / (se[0] * se[1]))
+print('Korrelation ρ (v_max/K_M):', covar[0, 1] / (se[0] * se[1]))
 
 
 # Güte der Kurvenanpassung
@@ -201,18 +203,18 @@ print(f'(berechnet aus {N_mittel} Mittelwerten, ν = {nu_mittel})')
 
 # Shapiro-Wilk-Test auf Normalverteilung der Residuen
 # p > 0.05 → kein Hinweis gegen
-print('Shapiro Residuen (Mittelwerte):', stats.shapiro(v['res']))
+print('Shapiro Residuen (Einzelwerte):', stats.shapiro(v['res']))
 
 # === Plot: Michaelis-Menten-Kurve mit Fit ===
 S_plot = np.linspace(0, v['S'].max(), 300)
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 9), sharex=True, gridspec_kw={'height_ratios': [3, 1]})
 
-# Datenpunkte mit Fehlerbalken (Standardfehler des Mittels)
+# Datenpunkte mit Fehlerbalken (Standardfehler der Steigung je Replikat, aus 5.i)
 #ax1.errorbar(
 #    v['S'], v['v0'],
 #    yerr=v['se_v0'],
 #    fmt='o', ms=4, capsize=3,
-#    label=r'$\overline{v_0}$ (± SEM)'
+#    label=r'$v_0$ (± Fit-SE)'
 #)
 ax1.scatter(v['S'], v['v0'], label=r'$v_0$')
 
