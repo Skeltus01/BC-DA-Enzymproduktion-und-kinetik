@@ -161,7 +161,7 @@ print('Korrelation ρ² (v_max/K_M):', covar[0, 1] / (se[0] * se[1]))
 
 
 # Güte der Kurvenanpassung
-# Residuen = Differenz zwischen gemessenen und angepassten Werten
+# Residuen = Differenz zwischen gemessenen und Modell- Werten
 # Hinweis: Da nur 3 Replikate pro Konzentration vorliegen, ist die Varianzschätzung
 # aus den Replikaten zu ungenau für eine sinnvolle Gewichtung.
 # Daher wird χ² ungewichtet berechnet — aber auf ALLEN 39 Einzelwerten,
@@ -262,7 +262,7 @@ plt.close()
 # Unterscheiden sich die erhaltenen Werte für die Parameter v_max und KM von den zuvor bestimmten?
 
 
-# Reziproke Transformation der MITTELWERTE
+# # Reziproke Transformation der EINZELWERTE (13 Konzentrationen × 3 Replikate = 39 Werte)
 x = 1 / v['S']       # 1/[S] in 1/µM
 y = 1 / v['v0']      # 1/v0 in min/nM
 
@@ -279,14 +279,29 @@ print(f'Lineweaver-Burk:')
 print(f'  v_max = {v_max_lb:.2f} nM/min')
 print(f'  K_M   = {KM_lb:.1f} μM')
 print(f'  R²    = {lb.rvalue**2:.4f}')
+
+# Standardfehler der LB-Parameter (Delta-Methode, inkl. Kovarianz von Achsenabschnitt und Steigung)
+b0, b1 = lb.intercept, lb.slope                  # Achsenabschnitt = 1/v_max, Steigung = KM/v_max
+se_b0, se_b1 = lb.intercept_stderr, lb.stderr    # Standardfehler von Achsenabschnitt und Steigung
+cov_b0b1 = -x.mean() * se_b1**2                  # Kovarianz bei einfacher linearer Regression
+
+se_vmax_lb = se_b0 / b0**2
+se_KM_lb = np.sqrt((b1 / b0**2)**2 * se_b0**2
+                   + (1 / b0)**2 * se_b1**2
+                   - 2 * (b1 / b0**3) * cov_b0b1)
+
+print(f'  LB mit SE: v_max = {v_max_lb:.2f} ± {se_vmax_lb:.2f} nM/min, '
+      f'K_M = {KM_lb:.1f} ± {se_KM_lb:.1f} µM')
+
 print(f'\nVergleich mit nicht-linearem Fit (5.ii):')
 print(f'  v_max: {v_max:.2f} vs {v_max_lb:.2f} nM/min (Abweichung: {abs(v_max - v_max_lb)/v_max*100:.1f}%)')
 print(f'  K_M:   {KM:.1f} vs {KM_lb:.1f} μM (Abweichung: {abs(KM - KM_lb)/KM*100:.1f}%)')
 
-# === Fehlerfortpflanzung für Lineweaver-Burk-Parameter ===
+# === Fehlerbalken der transformierten Datenpunkte (nur für den Plot) ===
 
 # Die Standardfehler der transformierten Werte:
 # σ(1/v0) = σ(v0) / v0²  (Fehlerfortpflanzung für reziproke Funktion)
+# se_v0 = Standardfehler der Steigung aus dem linearen Fit je Replikat (5.i)
 sy = v['se_v0'] / v['v0']**2
 
 
