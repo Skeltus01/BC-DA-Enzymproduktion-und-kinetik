@@ -169,12 +169,9 @@ print('Korrelation ρ (v_max/K_M):', covar[0, 1] / (se[0] * se[1]))
 # Daher wird χ² ungewichtet berechnet — aber auf ALLEN 39 Einzelwerten,
 # um eine zuverlässige Schätzung der Restvarianz zu erhalten.
 
-# Residuen aller 39 Einzelwerte und 13 Mittelwerte (für χ²-Berechnung)
+# Residuen aller 39 Einzelwerte (für χ²-Berechnung und Residuenplo)
 v['v_fit'] = mm(v['S'], *param)
 v['res'] = v['v0'] - v['v_fit']
-
-v_mean['v_fit'] = mm(v_mean['S'], *param)
-v_mean['res'] = v_mean['v0'] - v_mean['v_fit']
 
 
 # Chi-Quadrat aus allen Einzelwerten
@@ -185,20 +182,6 @@ chi2_red = chi2 / nu_einzel           # Reduziertes Chi-Quadrat = Schätzung der
 print(f'χ² = {chi2:.3f}')
 print(f'red. χ² = {chi2_red:.3f}')
 print(f'(berechnet aus {N_einzel} Einzelwerten, ν = {nu_einzel})')
-
-
-# Chi-Quadrat aus allen Mittelwerten
-N_mittel = len(v_mean)                     # 13 Mittelwerte
-nu_mittel = N_mittel - len(param)     # Freiheitsgrade
-chi2 = (v_mean['res']**2).sum()            # Summe der quadrierten Residuen (ungewichtet)
-chi2_red = chi2 / nu_mittel           # Reduziertes Chi-Quadrat = Schätzung der Restvarianz
-print(f'χ² = {chi2:.3f}')
-print(f'red. χ² = {chi2_red:.3f}')
-print(f'(berechnet aus {N_mittel} Mittelwerten, ν = {nu_mittel})')
-
-
-
-
 
 
 # Shapiro-Wilk-Test auf Normalverteilung der Residuen
