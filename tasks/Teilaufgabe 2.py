@@ -163,6 +163,7 @@ res = np.concatenate([value - value.mean() for value in staemme_24])
 print(f'Shapiro Residuen: p = {stats.shapiro(res).pvalue:.4f}')
 # Q-Q-Plot (Quantile-Quantile-Plot) der Residuen: Bei Normalverteilung liegen die Punkte auf der Diagonalen
 stats.probplot(res, plot=plt)
+plt.savefig('plots/a2_residuen_qqplot.png')
 plt.show()
 
 ### Levene-Test: Prüft die Varianzhomogenität
