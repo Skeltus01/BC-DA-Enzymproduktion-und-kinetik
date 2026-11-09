@@ -202,7 +202,7 @@ print(f'(berechnet aus {N_mittel} Mittelwerten, ν = {nu_mittel})')
 
 
 # Shapiro-Wilk-Test auf Normalverteilung der Residuen
-# p > 0.05 → kein Hinweis gegen
+# p > 0.05 → kein Hinweis gegen Normalverteilung der Residuen
 print('Shapiro Residuen (Einzelwerte):', stats.shapiro(v['res']))
 
 # === Plot: Michaelis-Menten-Kurve mit Fit ===
@@ -319,7 +319,7 @@ ax.plot(xf, lb.intercept + lb.slope * xf, 'r-', label='Lineare Regression')
 ax.errorbar(
     x, y, yerr=sy,
     fmt='o', ms=3, capsize=2,
-    label=r'$1/v_0$ (± $σ_{1/v_0}$)'
+    label=r'$1/v_0$ (± fortgepfl. Fit-SE)'
 )
 
 # Achsenbeschriftungen und Titel
